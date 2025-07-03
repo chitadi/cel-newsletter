@@ -1,0 +1,6 @@
+- scraping is good, the keywords or some other mechanism to rank needs to be done
+- get the html stuff to work 
+- change the api to gemini free tier?
+- put cron job on github
+- make a readme
+- make it modular or put it into folders

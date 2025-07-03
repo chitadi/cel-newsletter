@@ -1,0 +1,67 @@
+Startups Weekly: Tech and the law
+◦ Here's the summary: AI companies made significant moves: Rubrik acquired AI startup Predibase to boost agent tech, while copyright lawsuits against Stability AI continued despite Getty Images dropping its case.
+
+◦ Massive AI funding dominated, with two legal tech startups (Harvey AI and Abridge) each securing $300 million rounds, reflecting the sector's intense investor interest.
+
+◦ Notable smaller deals included drone startup Raphe mPhibr ($100M), recycled plastic tech firm Novoloop ($21M), AI voices platform Synthflow AI ($20M), and stealth space startup Lux Aeterna ($4M).
+https://techcrunch.com/2025/06/27/startups-weekly-tech-and-the-law/
+
+Wakefit joins IPO queue; Pine Labs DRHP, decoded
+◦ Here's the summary: Wakefit, a mattress and home furniture brand, has filed for an IPO seeking to raise ₹468 crore to fund offline store expansion and marketing efforts.
+
+◦ Fintech company Pine Labs also filed for an IPO aiming to raise ₹2,600 crore and target a $4-5 billion valuation.
+
+◦ The newsletter also covers debates on AI's significant impact on jobs globally, SoftBank's ambitious plans to lead in artificial super intelligence, and a clash over AI talent between Meta's CTO and Sam Altman.
+https://economictimes.indiatimes.com/tech/newsletters/tech-top-5/wakefit-joins-ipo-queue-pine-labs-drhp-decoded/articleshow/122115042.cms
+
+Smart Pay: Razorpay, Cashfree & Co Are Jumping On The Agentic AI Bandwagon
+◦ Summary: Indian payment companies like Razorpay, Cashfree, and PayU are adopting a new AI standard called Model Context Protocol (MCP) to enhance their services.
+
+◦ This allows businesses using these platforms to build AI tools interacting with payment systems, potentially creating features like chatbots that help customers checkout.
+
+◦ Payment gateways are implementing MCP to stay competitive by enabling smarter AI features for merchants and customers.
+https://inc42.com/features/razorpay-cashfree-co-are-jumping-on-the-agentic-ai-bandwagon/
+
+Blockchain leads the way in this week’s 16 FinTech deals
+◦ Here's a summary for your newsletter: Blockchain leader Digital Asset secured the week's largest funding round, raising $135 million to accelerate its institutional financial infrastructure services.
+
+◦ European FinTech Finom followed with a major €115 million raise to expand its financial management platform for small businesses across Europe.
+
+◦ Despite these large deals, global FinTech funding saw a significant 54% drop in deals this quarter compared to 2024, reflecting reduced investor risk appetite.
+https://fintech.global/2025/06/27/blockchain-leads-the-way-in-this-weeks-16-fintech-deals/?utm_source=rss&utm_medium=rss&utm_campaign=blockchain-leads-the-way-in-this-weeks-16-fintech-deals
+
+The Week’s 10 Biggest Funding Rounds: AI Continues To Dominate In An Action-Packed Week
+◦ Summary: Thinking Machines Lab broke records with a $2 billion seed funding round, the largest U.S.
+
+◦ seed round ever, led by Andreessen Horowitz.
+
+◦ Abridge ($300M health AI notes) and Harvey ($300M legal tech) tied for second place, while AI, blockchain, and prediction startups also secured substantial funding.
+
+◦ Significant rounds continued across diverse sectors, including Kalshi ($185M), Digital Asset ($135M), Decagon ($131M), Neuron23 ($96.5M biotech), Xona Space Systems ($92M spacetech), Xbow ($75M security), and Ledgebrook ($65M insurance).
+https://news.crunchbase.com/venture/biggest-funding-rounds-ai-thinking-machines-abridge/
+
+TBPN | Tuesday, June 24th
+◦ Summary: A US judge ruled that Anthropic's use of books to train its AI model Claude qualifies as fair use and is legal under copyright law.
+
+◦ Despite this win on training data, Anthropic faces potential large fines for storing millions of copyrighted books without permission.
+
+◦ The ruling is key for US AI progress, as denying fair use could disadvantage American companies against nations like China with looser copyright rules.
+https://youtu.be/1oirrAXe564
+
+TBPN | Wednesday, June 25th
+◦ TBPN Live reported concerns about socialist candidate Mum Donnie potentially becoming New York City mayor and his policies like taxing the wealthy, creating government-run grocery stores, and altering policing, sparking Wall Street unease.
+
+◦ Significant corporate headlines included Shell considering acquiring BP, Nvidia facing pushback over its cloud computing expansion DGX Leptton, and Bumble cutting 30% of its workforce while its stock rose amid an online dating market shift.
+
+◦ Other notable stories covered China restricting passports of its rare earth experts, referencing venture capital marketing trends, and noting that Mum Donnie's influential campaign leveraged strong TikTok engagement rather than traditional media.
+
+◦ Summary:
+https://youtu.be/-L4HttqnH5s
+
+TBPN | Thursday, June 26th
+◦ Here's a summary of the TVPN live show for your newsletter: Meta has hired three key AI researchers from OpenAI's Zurich office, known for pioneering work on vision transformers enabling image understanding in AI models.
+
+◦ Google announced a new artificial intelligence tool designed to help researchers better understand how human genes function.
+
+◦ Investment platform Republic plans to allow broader public investment in SpaceX by offering secondary shares traded on blockchain technology.
+https://youtu.be/u1mi-_6LXqM

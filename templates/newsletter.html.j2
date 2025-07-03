@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset & Base */
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fff6ef;
+      color: #141414;
+      font-family: "Manrope", "Helvetica Neue", Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      max-width: 640px;
+      margin: auto;
+      padding: 32px 24px;
+    }
+
+    /* Header Box */
+    .header-box {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-left: 6px solid #fb723d;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .header-box h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #fb723d;
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    /* Logo & Intro */
+    .logo {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto 20px;
+      display: block;
+    }
+    .intro {
+      font-size: 10px;
+      font-style: italic;
+      color: #A9A9A9;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    /* Section Title */
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fb723d;
+      margin: 40px 0 24px;
+      text-align: center;
+      line-height: 1.25;
+    }
+
+    /* Article & Video Cards */
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+      margin-bottom: 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .card img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    .card-body {
+      padding: 20px 22px 24px;
+    }
+    .card-body h2 {
+      font-family: "DM Sans", "Manrope", sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: #111;
+      margin: 0 0 12px;
+      line-height: 1.4;
+      text-align: center;
+    }
+    .card-body p {
+      margin: 0 0 14px;
+      font-size: 12px;
+      line-height: 1.4;
+      text-align: left;
+    }
+    .read-more {
+      display: inline-block;
+      background: #fb723d;
+      color: #fff6ef;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      margin: 12px auto 0;
+    }
+    .read-more:hover {
+      background: #e85e29;
+    }
+
+    /* Footer */
+    .footer {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 40px;
+      line-height: 1.45;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header Box -->
+    <div class="header-box">
+      <h1>Chittem's Keep-Up with Startups — {{ date.strftime("%-d %b %Y") }}</h1>
+    </div>
+
+    <!-- Logo & Intro -->
+    <img class="logo" src="https://i.ibb.co/2YPv6C1D/cel-logo.png" alt="Club Logo" />
+    <p class="intro">Here are the top&nbsp;5 startup and tech stories from the past three days, hand-picked by my auto-curation bot. Hope you find them useful — let me know how I can improve!</p>
+
+    <!-- Articles Section Title -->
+    <div class="section-title">📰 Biggest Stories of the Week</div>
+
+    <!-- Articles -->
+    {% for a in articles %}
+      <div class="card">
+        <div class="card-body">
+          <h2>{{ a.title }}</h2>
+        </div>
+        {% if a.image_url %}
+          <img src="{{ a.image_url }}" alt="Article image" />
+        {% endif %}
+        <div class="card-body">
+          <p>{{ a.summary|replace("\n","<br/>") }}</p>
+          <a class="read-more" href="{{ a.url }}">Read full article →</a>
+        </div>
+      </div>
+    {% endfor %}
+
+    <!-- Must-Watch Section -->
+    <div class="section-title">🎬 Must-Watch</div>
+    {% for v in videos %}
+      <div class="card">
+        <div class="card-body">
+          <h2>{{ v.title }}</h2>
+        </div>
+        {% if v.thumbnail_url %}
+          <img src="{{ v.thumbnail_url }}" alt="Video image" />
+        {% endif %}
+        <div class="card-body">
+          <p>{{ v.summary|replace("\n","<br/>") }}</p>
+          <a class="read-more" href="{{ v.url }}">Watch the Full Video →</a>
+        </div>
+      </div>
+    {% endfor %}
+
+    <!-- Footer -->
+    <p class="footer">
+      You’re receiving this because you subscribed to <strong>Startups &amp; Tech Dispatch</strong>.<br/>
+      <em>Sent automatically every three days.</em>
+    </p>
+  </div>
+</body>
+</html>

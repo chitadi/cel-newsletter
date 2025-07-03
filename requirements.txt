@@ -1,0 +1,17 @@
+playwright>=1.37.0
+sqlalchemy
+trafilatura
+beautifulsoup4
+python-dateutil
+pytz
+requests
+backoff
+pyyaml
+jinja2
+premailer
+python-slugify
+feedparser
+python-dotenv
+openai
+youtube_transcript_api
+google-api-python-client
