@@ -33,6 +33,7 @@ class Subscriber(Base):
 class Video(Base):
     __tablename__ = "videos"
     video_id      = Column(String,   primary_key=True)    # YouTube ID
+    channel_name  = Column(Text)
     url           = Column(Text)
     title         = Column(Text)
     description   = Column(Text)

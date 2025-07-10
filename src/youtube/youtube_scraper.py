@@ -32,7 +32,7 @@ def parse_iso_duration(duration):
     return hours * 3600 + minutes * 60 + seconds
 
 
-def fetch_videos(max_results_per_channel=7, config_path="channels.yaml"):
+def fetch_videos(max_results_per_channel=7, config_path="sources_and_keywords/channels.yaml"):
     """
     Fetch recent videos >= MIN_DURATION_SEC from each channel's uploads playlist
     and store new ones in the DB.
@@ -118,6 +118,7 @@ def fetch_videos(max_results_per_channel=7, config_path="channels.yaml"):
                     # Add new video record
                     ssn.add(Video(
                         video_id=vid,
+                        channel_name=channel_name,
                         url=f"https://youtu.be/{vid}",
                         title=snip["title"],
                         description=snip.get("description", ""),

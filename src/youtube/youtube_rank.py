@@ -21,9 +21,16 @@ _query  = " ".join(_tokens)
 _MODEL  = SentenceTransformer(_EMB_MODEL)
 QUERY_VEC = _MODEL.encode([_query], normalize_embeddings=True)[0]
 
+cfg = yaml.safe_load(Path("sources_and_keywords/youtube_keywords.yaml").read_text())
+SRC_W = cfg.get("source_weights", {})
+
+
 def cosine(blob):
     v = np.frombuffer(blob, dtype=np.float32)
     return float(np.dot(v, QUERY_VEC))
+
+def source_weight(name: str) -> float:
+    return float(SRC_W.get(name, 1.0))
 
 UTC = pytz.utc
 
@@ -45,7 +52,8 @@ def rank_videos():
             sem   = cosine(v.vector) if v.vector else 0
             kw    = kw_weighted_hits(txt)
             # rec   = 24 / max(1, (now - v.published_at).total_seconds()/3600)
-            v.score = int(kw*1 + sem*25)
+            w = source_weight(v.channel_name)
+            v.score = int(w * (kw*1 + sem*25))
         ssn.commit()
 
 if __name__ == "__main__":
