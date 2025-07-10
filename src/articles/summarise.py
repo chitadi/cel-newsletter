@@ -7,6 +7,10 @@ from openai import OpenAI
 from src.models import Article
 import re
 
+import re, sqlalchemy as sa
+from sqlalchemy.orm import Session
+from src.models import Article
+
 import re
 
 def clean_summary(text: str) -> str:
@@ -63,49 +67,63 @@ client = OpenAI(
   api_key = os.getenv("OPENROUTER_API_KEY"),
 )
 
-# better idea just to summarise top 5?
-def summarise_batch(limit: int = 4) -> None:
-    """Fill `summary` for up to <limit> unsummarised rows (highest score first)."""
-    eng = create_engine("sqlite:///newsletter.db")
-    
+ROUNDUP_RE = re.compile(r"\bround[\s-]*up\b", re.I)
+COHORT_RE = re.compile(r"\bcohort\b", re.I)
+
+
+def summarise_batch(limit: int = 5) -> None:
+    """Summarise the top <limit> scored, non-duplicate, non-roundup articles."""
+
+    eng = sa.create_engine("sqlite:///newsletter.db")
+
     with Session(eng) as ssn:
-        to_do = (
-            ssn.scalars(
-                select(Article)
-                .where(Article.summary.is_(None))
-                .group_by(Article.url)
-                .order_by(Article.score.desc())
-                .limit(limit)
-            )
-            .all()
+
+        # 1️⃣  Pull a wider pool (3× limit) sorted by score
+        pool = (
+            ssn.query(Article)
+               .filter(Article.summary.is_(None))
+               .order_by(Article.score.desc())
+               .limit(limit * 3)
+               .all()
         )
 
-        for art in to_do:
-            snippet = art.text[:6000]
+        # 2️⃣  Filter: skip round-ups, ensure one per source
+        unique, seen = [], set()
+        for art in pool:
+            if ROUNDUP_RE.search(art.title) or COHORT_RE.search(art.title):
+                continue                      # skip roundup articles
+            if art.source_name in seen:
+                continue                      # duplicate source
+            seen.add(art.source_name)
+            unique.append(art)
+            if len(unique) == limit:
+                break
+
+        # 3️⃣  Summarise each selected article
+        for art in unique:
+            snippet = art.text[:6_000]
 
             try:
                 completion = client.chat.completions.create(
-                extra_body={},
-                model="deepseek/deepseek-r1-0528:free",
-                messages=[
-                    {
-                    "role": "user",
-                    "content": PROMPT_TMPL.format(text=snippet)
-                    }
-                ]
+                    model="deepseek/deepseek-r1-0528:free",
+                    messages=[{
+                        "role": "user",
+                        "content": PROMPT_TMPL.format(text=snippet)
+                    }],
+                    extra_body={}
                 )
-                choices = getattr(completion, "choices", None)
-                if not choices or not choices[0].message or not choices[0].message.content:
-                    print(f"⚠️  No summary returned for {art.title!r}; skipping.")
+                content = completion.choices[0].message.content.strip()
+                if not content:
+                    print(f"⚠️  Empty summary for: {art.title[:60]}")
                     continue
+                art.summary = clean_summary(content)
+
             except Exception as e:
-                print(f"❌ summarisation error for {art.title!r}: {e}")
+                print(f"❌ LLM error on: {art.title[:60]} – {e}")
                 continue
 
-            raw = choices[0].message.content.strip()
-            art.summary = clean_summary(raw)   # or just raw
-            ssn.commit()
-            print(f"✅ summarised → {art.title[:60]}")
+        ssn.commit()   # one commit for all updates
+        print(f"✅ summarised {len([a for a in unique if a.summary])} / {limit} articles")
 
 if __name__ == "__main__":
     summarise_batch()

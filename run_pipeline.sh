@@ -12,21 +12,18 @@ cd "$(dirname "$0")"  # change to the script's directory (your project root)
 
 # 1. Harvest articles
 python3 run_harvest.py
+python3 -m src.embed_articles
 python3 -m src.rank
 python3 -m src.summarise
 
 # 2. harvest YouTube videos
 python3 -m src.youtube_scraper
+python3 -m src.embed_videos
 python3 -m src.youtube_rank
 python3 -m src.youtube_summarise
 
-# 3. harvest tweets
-# python3 -m src.twitter_scraper
-# python3 -m src.twitter_rank
-# python3 -m src.twitter_summarise
-
-# 4. Build and send newsletter
+# 3. Build and send newsletter
 python3 -m src.render_newsletter
 python3 -m src.smtp_mailer
 
-# python3 -m src.housekeeping
+python3 -m src.housekeeping

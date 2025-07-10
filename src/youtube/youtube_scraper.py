@@ -4,6 +4,7 @@ import pytz
 import yaml
 import re
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from src.models import Video
@@ -12,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv() 
 
 UTC = pytz.utc
-HOURS = 120  # lookback window in hours
+HOURS = 168  # lookback window in hours basically 7 days here
 MIN_DURATION_SEC = 5 * 60  # 5 minutes
 
 def load_channels(config_path="channels.yaml"):
@@ -31,7 +32,7 @@ def parse_iso_duration(duration):
     return hours * 3600 + minutes * 60 + seconds
 
 
-def fetch_videos(max_results_per_channel=10, config_path="channels.yaml"):
+def fetch_videos(max_results_per_channel=7, config_path="channels.yaml"):
     """
     Fetch recent videos >= MIN_DURATION_SEC from each channel's uploads playlist
     and store new ones in the DB.
@@ -61,13 +62,21 @@ def fetch_videos(max_results_per_channel=10, config_path="channels.yaml"):
             # 2. Paginate through the uploads playlist
             next_page_token = None
             fetched = 0
-            while fetched < max_results_per_channel:
-                pl_resp = youtube.playlistItems().list(
-                    part="snippet",
-                    playlistId=uploads_pl,
-                    maxResults=min(50, max_results_per_channel - fetched),
-                    pageToken=next_page_token
-                ).execute()
+            stop_channel = False
+            while not stop_channel and fetched < max_results_per_channel:
+                try:
+                    pl_resp = youtube.playlistItems().list(
+                        part="snippet",
+                        playlistId=uploads_pl,
+                        maxResults=min(50, max_results_per_channel - fetched),
+                        pageToken=next_page_token
+                    ).execute()
+                except HttpError as e:
+                    if e.status_code == 403:
+                        print(f"⚠️ Skipping {channel_name}: playlistItems blocked (403)")
+                        break  # stop paging this channel
+                    else:
+                        raise   # re-raise other errors
 
                 video_ids = [item["snippet"]["resourceId"]["videoId"] for item in pl_resp.get("items", [])]
                 # Batch get durations
@@ -91,15 +100,19 @@ def fetch_videos(max_results_per_channel=10, config_path="channels.yaml"):
 
                     # Stop when we hit older videos
                     if published_at < cutoff:
+                        print(f"video for {channel_name} too old")
+                        stop_channel = True
                         break
 
                     # Skip if already in DB
                     if ssn.get(Video, vid):
+                        print(f"video for {channel_name} already present in db")
                         continue
 
                     # Filter by duration
                     dur_iso = durations.get(vid, "")
                     if parse_iso_duration(dur_iso) < MIN_DURATION_SEC:
+                        print(f"video for {channel_name} too short")
                         continue
 
                     # Add new video record

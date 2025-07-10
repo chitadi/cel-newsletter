@@ -1,0 +1,107 @@
+scoring_categories:
+  # --- Tier 1: Basic Topic Identification (Low Weight) ---
+  # What is the article broadly about?
+  - name: Indian_stuff
+    weight: 5
+    keywords: [India, micro-VC, quick-commerce, Crore, INR, Lakh, SEBI, UPI, NPCI, RBI, Rs, rupee, defence-tech, aerospace, space, space-tech, DHRP, IPO-bound]
+  - name: Indian_Companies
+    weight: 3
+    keywords: [Nykaa, Meesho, Flipkart, Amazon, Zepto, blinkit, zomato, oyo, Rapido, ola, Uber, namma yatri, swiggy, GROWW, ZERODHA, delhivery, paytm, lenskart, sarvam, krutim, pixxel, isro, Phonepe, google pay, gpay ]
+  - name: Topic_Startup_Generic
+    weight: 4
+    keywords: [founder, startup, entrepreneur, backed, launched, CEO, Bengaluru, Gurugram, Mumbai, Tier, sector, startup ecosystem, Silicon Valley, IIT, IIM, BITS]
+  - name: Topic_Tech_Generic
+    weight: 3
+    keywords: [ai, artificial intelligence, ml, machine learning, cloud, saas, api, open source, software, hardware, platform, product, google, openai, microsoft, meta, anthropic]
+  - name: Topic_Finance_Generic
+    weight: 2
+    keywords: [economy, stock, fund, mn, billion, million, financial results, shares, q1, q2, q3 ,q4]
+
+  # --- Tier 2: Specific Concepts & Metrics (Medium Weight) ---
+  # Does the article discuss specific, substantive details?
+  - name: Concept_Startup_Funding
+    weight: 3
+    keywords: [series, seed, investor, venture capital, vc, angel, round, pre-seed, funding, Series A, Series B, seed funding, angel investment, fundraise]
+  - name: Concept_Startup_Metrics
+    weight: 4
+    keywords: [bootstrapped, accelerator, incubator, growth, scale, traction, CAC, burn rate, valuation, unicorn, decacorn, IPO, SPAC, exit, acquisition, merger, pivot, product launch, MVP, go-to-market]
+  - name: Concept_Tech_Specifics
+    weight: 3
+    keywords: [deep learning, generative ai, devops, framework, library, tech stack, data infrastructure, LLM, model, NLP, computer vision, autonomous, gpu, training, fine-tuning]
+  - name: Concept_Finance_Metrics
+    weight: 3
+    keywords: [ipo, initial public offering, earnings, quarterly results, downround, regulation, sec filing, fintech, neobank, insurtech, m&a, profit, revenue, runway, cash flow, capital, buyout, pat, FY24, FY25, portfolio,]
+
+  # --- Tier 3: High-Impact & Quality Signals (High Weight) ---
+  # Is this a significant, "juicy" story? Is it well-researched?
+  - name: Quality_Analysis
+    weight: 3
+    keywords: [in-depth, investigative, exclusive, behind-the-scenes, long-form, deep dive, detailed analysis, data-driven, proprietary research, expert insights, whitepaper, case study, industry report, market analysis]
+  - name: Impact_MarketShift
+    weight: 3
+    keywords: [market disruption, paradigm shift, economic impact, deglobalization, reshoring, supply chain crisis, AI race, green tech, sustainability, ESG, talent wars]
+  - name: Impact_MajorEvent
+    weight: 5
+    keywords: [lawsuit, regulatory probe, antitrust, data breach, corporate governance, boardroom shakeup, CEO resignation, hostile takeover, AI regulation, H-1B visa changes, GDPR]
+  - name: Quality_Source
+    weight: 2
+    keywords: [byline, senior editor, chief correspondent, award-winning, Pulitzer Prize, cited by, peer-reviewed, op-ed, executive interview, think tank]
+
+source_weights:
+  YourStory:                            1.3
+  Inc42:                                1.3
+  Entrackr:                             1.2
+  Economic Times - Startups:            1.2
+  Business Standard:                    1.1
+  Moneycontrol:                         1.1
+  LiveMint:                             1.3
+  firstpost - business:                 1.0
+  firstpost - tech:                     1.2
+  Startup India Magazine:               0.8
+  FeedMyStartup:                        0.8
+  Startup Reporter:                     0.7
+  The Startup Gig:                      0.7
+  Business Outreach:                    0.7
+  Startup Indian:                       0.7
+  The Startup Journal:                  0.8
+  TechnoVans:                           0.7
+  StartupsIndia:                        0.7
+  NettyFeed:                            0.7
+  The Wall Street Journal - tech:       1.4
+  The Wall Street Journal - finance:    1.2
+  The Wall Street Journal - US Business: 1.2
+  Analytics India Magazine:             1.3
+  DealStreetAsia:                       1.3
+  Finshots:                             1.3
+  Finextra Research:                    1.0
+  TechCrunch:                           1.3
+  Crunchbase News:                      1.2
+  WIRED – Business:                     1.2
+  Reuters Technology:                   1.4
+  CNBC Asia News:                       1.2
+  Sifted (FT):                          1.2
+  VentureBeat:                          1.2
+  The Verge:                            1.4
+  Hacker News:                          1.0
+  EU-Startups:                          0.9
+  The Next Web:                         1.1
+  Tech in Asia:                         1.1
+  Startup News Asia:                    0.9
+  Vulcan Post:                          0.9
+  Bloomberg Technology:                 1.4
+  Reuters Business:                     1.2
+  The Fintech Times:                    0.8
+  FinTech Futures:                      0.8
+  FinTech Global:                       0.8
+  Payments Journal:                     0.7
+  Business Insider:                     1.4
+  Axios:                                1.4
+  Yahoo Finance:                        1.1
+  MarketWatch:                          1.1
+  Gadgets 360:                          1.0
+  The Arc:                              5.0
+  cnbc - business:                      1.2
+  cnbc - tech:                          1.2
+  cnbc - finance:                       1.2
+  Indian Startup News Magazine:         0.7
+  Wired - Tech:                         1.4

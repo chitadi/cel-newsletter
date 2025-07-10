@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Text, DateTime, String
+from sqlalchemy import create_engine, Column, Text, DateTime, String, LargeBinary
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Integer
 from sqlalchemy import Boolean, DateTime
@@ -18,6 +18,7 @@ class Article(Base):
     score        = Column(Integer)   # nullable
     summary      = Column(Text)      # nullable
     image_url   = Column(Text, nullable=True)
+    vector       = Column(LargeBinary, nullable=True)
 
 
 class Subscriber(Base):
@@ -39,7 +40,8 @@ class Video(Base):
     published_at  = Column(DateTime)
     score         = Column(Integer, nullable=True)
     summary       = Column(Text,    nullable=True)
-
+    transcript    = Column(Text,    nullable=True)  # for scoring
+    vector       = Column(LargeBinary, nullable=True)
 
 class Tweet(Base):
     __tablename__ = "tweets"

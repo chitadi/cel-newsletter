@@ -1,0 +1,36 @@
+scoring_categories:
+  # --- Tier 1: Basic Topic Identification (Low Weight) ---
+  # What is the article broadly about?
+  - name: Indian_stuff
+    weight: 4
+    keywords: [startup, India, micro-VC, quick-commerce, Crore, INR, Lakh, SEBI, UPI, NPCI, RBI, Rs, rupee, defence-tech, aerospace, space, space-tech, DHRP, IPO-bound]
+  - name: Topic_Tech_Generic
+    weight: 3
+    keywords: [ai, artificial intelligence, ml, machine learning, cloud, saas, api, open source, software, hardware, platform, product, google, openai, microsoft, meta, anthropic]
+  - name: Topic_Finance_Generic
+    weight: 3
+    keywords: [economy, stock, fund, mn, billion, million, financial results, shares, q1, q2, q3 ,q4]
+
+  # --- Tier 2: Specific Concepts & Metrics (Medium Weight) ---
+  # Does the article discuss specific, substantive details?
+  - name: Concept_Tech_Specifics
+    weight: 3
+    keywords: [deep learning, generative ai, devops, framework, library, tech stack, data infrastructure, LLM, model release, NLP, computer vision, autonomous, gpu, training, fine-tuning]
+  - name: Concept_Finance_Metrics
+    weight: 4
+    keywords: [ipo, initial public offering, earnings, quarterly results, downround, regulation, sec filing, fintech, neobank, insurtech, m&a, profit, revenue, runway, cash flow, capital, buyout, pat, FY24, FY25, portfolio,]
+
+  # --- Tier 3: High-Impact & Quality Signals (High Weight) ---
+  # Is this a significant, "juicy" story? Is it well-researched?
+  - name: Quality_Analysis
+    weight: 3
+    keywords: [in-depth, investigative, exclusive, behind-the-scenes, long-form, deep dive, detailed analysis, data-driven, proprietary research, expert insights, whitepaper, case study, industry report, market analysis]
+  - name: Impact_MarketShift
+    weight: 3
+    keywords: [market disruption, paradigm shift, economic impact, deglobalization, reshoring, supply chain crisis, AI race, green tech, sustainability, ESG, talent wars]
+  - name: Impact_MajorEvent
+    weight: 5
+    keywords: [lawsuit, regulatory probe, antitrust, data breach, corporate governance, boardroom shakeup, CEO resignation, hostile takeover, AI regulation, H-1B visa changes, GDPR, ban, coup]
+  - name: Manually_Picked_by_observing
+    weight: 5
+    keywords: [turnaround, revolutionised industry, broke barriers, scam, success story, collapse, marketing, customer, staggering, claimed, business, tactics, goodwill, history, potential, customers, company, money, market, prices, companies, percent, industry, services, question, wonder]

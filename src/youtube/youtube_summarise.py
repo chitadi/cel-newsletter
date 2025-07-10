@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 import openai
 from src.models import Video
 from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound
-from src.summarise import clean_summary
+from articles.summarise import clean_summary
 
 dotenv.load_dotenv()                               
 
@@ -37,14 +37,7 @@ client = openai.OpenAI(
   api_key = os.getenv("OPENROUTER_API_KEY"),
 )
 
-def fetch_transcript(video_id, fallback_desc):
-    try:
-        segs = YouTubeTranscriptApi.get_transcript(video_id)
-        return " ".join(s["text"] for s in segs)
-    except NoTranscriptFound:
-        return fallback_desc
-
-def summarise_batch(limit: int = 3) -> None:
+def summarise_batch(limit: int = 1) -> None:
     eng = create_engine("sqlite:///newsletter.db")
 
     with Session(eng) as ssn:
@@ -56,7 +49,7 @@ def summarise_batch(limit: int = 3) -> None:
         ).all()
 
         for v in vids:
-            content = fetch_transcript(v.video_id, v.description)
+            content = v.transcript or v.description
             snippet = content[:10000]  # keep under context window
             completion = client.chat.completions.create(
             extra_body={},
@@ -71,7 +64,6 @@ def summarise_batch(limit: int = 3) -> None:
             v.summary = clean_summary(completion.choices[0].message.content.strip())
             ssn.commit()
             print(f"summarised → {v.title[:60]}")
-            # print(v.summary)
 
 if __name__ == "__main__":
     summarise_batch()

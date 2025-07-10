@@ -15,3 +15,15 @@ python-dotenv
 openai
 youtube_transcript_api
 google-api-python-client
+sentence-transformers
+numpy
+google-auth-oauthlib 
+google-api-python-client
+yt-dlp 
+youtube-transcript-api 
+requests 
+stem
+chardet 
+browser-cookie3
+
+

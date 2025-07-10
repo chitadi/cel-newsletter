@@ -1,14 +1,14 @@
 import feedparser, hashlib, datetime, pytz, requests
 from sqlalchemy.orm import Session
 from src.models import Article
-from src.article_extractor import extract_text 
+from articles.article_extractor import extract_text 
 from bs4 import BeautifulSoup
 
 UTC = pytz.utc 
 
 UA = {"User-Agent": "Mozilla/5.0"}
 
-def fetch_rss(source: dict, db: Session, horizon_hours=120):
+def fetch_rss(source: dict, db: Session, horizon_hours=168):
     cutoff = datetime.datetime.now(tz=UTC) - datetime.timedelta(hours=horizon_hours)
     feed = feedparser.parse(source["feed_url"])
     
