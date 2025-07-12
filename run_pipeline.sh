@@ -11,16 +11,16 @@ cd "$(dirname "$0")"  # change to the script's directory (your project root)
 # ENV vars (or source from .env)
 
 # 1. Harvest articles
-python3 run_harvest.py
-python3 -m src.embed_articles
-python3 -m src.rank
-python3 -m src.summarise
+python3 -m src.articles.run_harvest.py
+python3 -m src.articles.embed_articles
+python3 -m src.articles.rank
+python3 -m src.articles.summarise
 
 # 2. harvest YouTube videos
-python3 -m src.youtube_scraper
-python3 -m src.embed_videos
-python3 -m src.youtube_rank
-python3 -m src.youtube_summarise
+python3 -m src.youtube.youtube_scraper
+python3 -m src.youtube.embed_videos
+python3 -m src.youtube.youtube_rank
+python3 -m src.youtube.youtube_summarise
 
 # 3. Build and send newsletter
 python3 -m src.render_newsletter
