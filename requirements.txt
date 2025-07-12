@@ -1,31 +1,37 @@
-playwright>=1.37.0
-sqlalchemy
-sqlite3
-trafilatura
+# ── Core scraping & parsing ────────────────────────────────
 beautifulsoup4
+feedparser
+trafilatura               # optional full-text extractor
+playwright>=1.37.0        # HTML fallback
+
+# ── Data / DB ───────────────────────────────────────────────
+sqlalchemy>=2.0
 python-dateutil
 pytz
+pytz-deprecation-shim     # only if you explicitly import it
+
+# ── Networking & retries ───────────────────────────────────
 requests
 backoff
-pyyaml
+
+# ── LLM & embeddings ───────────────────────────────────────
+openai                    # via OpenRouter key
+sentence-transformers
+numpy
+
+# ── Templating / e-mail ────────────────────────────────────
 jinja2
 premailer
 python-slugify
-feedparser
+
+# ── YouTube tools ──────────────────────────────────────────
+google-api-python-client
+youtube-transcript-api
+yt-dlp                    # (only if you really need local audio)
+
+# ── Utility ────────────────────────────────────────────────
 python-dotenv
-openai
-youtube_transcript_api
-google-api-python-client
-sentence-transformers
-numpy
-google-auth-oauthlib 
-google-api-python-client
-yt-dlp 
-youtube-transcript-api 
-requests 
-stem
-chardet 
-browser-cookie3
+PyYAML
 
-
-
+# ── Tor proxy support (optional) ───────────────────────────
+stem                       # only if you actually use it
