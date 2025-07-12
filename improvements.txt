@@ -1,3 +1,1 @@
-- put cron job on github
-- KEYWORDS, scoring change
 - make a readme

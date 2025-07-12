@@ -1,12 +1,7 @@
 import os, textwrap, dotenv
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
-import openai 
 from openai import OpenAI
-
-from src.models import Article
-import re
-
 import re, sqlalchemy as sa
 from sqlalchemy.orm import Session
 from src.models import Article

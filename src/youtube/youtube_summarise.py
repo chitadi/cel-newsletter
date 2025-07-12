@@ -1,11 +1,9 @@
-import re
 import os, textwrap, dotenv
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 import openai
 from src.models import Video
-from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound
-from articles.summarise import clean_summary
+from src.articles.summarise import clean_summary
 
 dotenv.load_dotenv()                               
 

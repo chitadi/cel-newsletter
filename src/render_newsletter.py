@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from premailer import transform
 from slugify import slugify
-from src.models import Article, Video, Tweet
+from src.models import Article, Video
 
 
 TODAY = datetime.date.today()
@@ -18,16 +18,6 @@ def load_top_articles(limit=5):
                .limit(limit)
                .all()
         )
-
-# def load_top_tweets(limit=3):
-#     eng = create_engine("sqlite:///newsletter.db")
-#     with Session(eng) as ssn:
-#         return (
-#             ssn.query(Tweet)
-#                .order_by(Tweet.score.desc())
-#                .limit(limit)
-#                .all()
-#         )
 
 def load_top_videos(limit=3):
     eng = create_engine("sqlite:///newsletter.db")

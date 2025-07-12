@@ -1,4 +1,4 @@
-import yaml, pathlib
+import yaml
 
 def load_sources(path="sources.yaml"):
     with open(path, "r") as f:
