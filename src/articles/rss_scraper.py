@@ -1,7 +1,7 @@
 import feedparser, hashlib, datetime, pytz, requests
 from sqlalchemy.orm import Session
 from src.models import Article
-from articles.article_extractor import extract_text 
+from src.articles.article_extractor import extract_text 
 from bs4 import BeautifulSoup
 
 UTC = pytz.utc 
