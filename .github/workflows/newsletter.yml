@@ -23,7 +23,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Init DB schema
-        run: python init_db.py
+        run: python -m src.init_db
   
       - name: Run full pipeline
         env:
