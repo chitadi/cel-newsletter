@@ -9,7 +9,7 @@ def main():
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    sources = load_sources("ources_and_keywords/sources.yaml")
+    sources = load_sources("sources_and_keywords/sources.yaml")
     for src in rss_sites(sources):
         print(f"Fetching RSS feed from {src['name']} …")
         try:

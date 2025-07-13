@@ -1,6 +1,6 @@
 import yaml
 
-def load_sources(path="ources_and_keywords/sources.yaml"):
+def load_sources(path="sources_and_keywords/sources.yaml"):
     with open(path, "r") as f:
         return yaml.safe_load(f)
 
