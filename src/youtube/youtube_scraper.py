@@ -16,7 +16,7 @@ UTC = pytz.utc
 HOURS = 24 # lookback window in hours basically 7 days here
 MIN_DURATION_SEC = 5 * 60  # 5 minutes
 
-def load_channels(config_path="channels.yaml"):
+def load_channels(config_path="sources_and_keywords/channels.yaml"):
     with open(config_path) as f:
         data = yaml.safe_load(f)
     return data.get("channels", [])
