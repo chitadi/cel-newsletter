@@ -26,6 +26,11 @@ jobs:
         env:
           SEED_SUBSCRIBERS: ${{ secrets.SEED_SUBSCRIBERS }}
         run: python -m src.init_db
+      
+      - name: Write cookies.txt
+        env:
+          YT_COOKIES: ${{ secrets.YT_COOKIES }}
+        run: echo "$YT_COOKIES" > cookies.txt
   
       - name: Run full pipeline
         env:
