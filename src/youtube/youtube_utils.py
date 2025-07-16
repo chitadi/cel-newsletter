@@ -52,8 +52,7 @@ MAX_RETRIES_PER_VIDEO = 3
 DEBUG = bool(os.getenv("YT_CAPTION_DEBUG", "0"))
 
 # ---------------- Cookie handling ----------------
-DEFAULT_COOKIE_FILE = "/Users/adchitte/Documents/Personal/newsletter/youtube.com_cookies.txt"
-COOKIE_FILE = Path(os.getenv("YT_COOKIE_FILE", DEFAULT_COOKIE_FILE))
+COOKIE_FILE = Path(os.getenv("YT_COOKIE_FILE"))
 if not COOKIE_FILE.exists():
     # Attempt live browser extraction (Chrome/Firefox)
     try:
