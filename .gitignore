@@ -1,3 +1,6 @@
 __pycache__/
 newsletter.db
+subscribers.txt
+token.json
+client_secret.json
 .env*
