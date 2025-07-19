@@ -8,16 +8,32 @@ from src.models import Article, Video
 
 
 TODAY = datetime.date.today()
+MAX_PER_SOURCE = 2
 
-def load_top_articles(limit=5):
+
+def load_top_articles(limit=15):
     eng = create_engine("sqlite:///newsletter.db")
     with Session(eng) as ssn:
-        return (
+        pool = (
             ssn.query(Article)
                .order_by(Article.score.desc())
                .limit(limit)
                .all()
         )
+    
+    chosen, seen = [], {}
+
+    for art in pool:
+        cnt = seen.get(art.source_name, 0)
+        if cnt >= MAX_PER_SOURCE:
+            continue        # we already kept 2 from this source
+        seen[art.source_name] = cnt + 1
+        chosen.append(art)
+        if len(chosen) == limit:
+            break
+
+    return chosen
+
 
 def load_top_videos(limit=3):
     eng = create_engine("sqlite:///newsletter.db")

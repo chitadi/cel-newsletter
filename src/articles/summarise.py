@@ -82,20 +82,13 @@ def summarise_batch(limit: int = 5) -> None:
                .all()
         )
 
-        # 2️⃣  Filter: skip round-ups, ensure one per source
-        unique, seen = [], set()
+        # 3️⃣  Summarise each selected article
         for art in pool:
             if ROUNDUP_RE.search(art.title) or COHORT_RE.search(art.title):
+                with Session(eng) as ssn:
+                    ssn.query(art).delete()  # remove roundup articles
                 continue                      # skip roundup articles
-            if art.source_name in seen:
-                continue                      # duplicate source
-            seen.add(art.source_name)
-            unique.append(art)
-            if len(unique) == limit:
-                break
 
-        # 3️⃣  Summarise each selected article
-        for art in unique:
             snippet = art.text[:6_000]
 
             try:
@@ -118,7 +111,7 @@ def summarise_batch(limit: int = 5) -> None:
                 continue
 
         ssn.commit()   # one commit for all updates
-        print(f"✅ summarised {len([a for a in unique if a.summary])} / {limit} articles")
+        print(f"✅ summarised {len([a for a in pool if a.summary])} / {limit} articles")
 
 if __name__ == "__main__":
     summarise_batch()

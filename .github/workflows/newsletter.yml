@@ -3,7 +3,7 @@ name: 📰 Weekly Newsletter
 on:
   schedule:
     # 03:30 UTC = 09:00 IST every Monday
-    - cron: '30 3 * * 1'
+    - cron: '30 3 * * *'
   workflow_dispatch:        # (optional) manual trigger
 
 jobs:
@@ -75,4 +75,4 @@ jobs:
           python -m src.smtp_mailer
 
           # 4. House-keeping
-          python -m src.housekeeping
+          # python -m src.housekeeping
