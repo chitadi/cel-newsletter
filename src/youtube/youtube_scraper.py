@@ -32,7 +32,7 @@ def parse_iso_duration(duration):
     return hours * 3600 + minutes * 60 + seconds
 
 
-def fetch_videos(max_results_per_channel=7, config_path="sources_and_keywords/channels.yaml"):
+def fetch_videos(max_results_per_channel=5, config_path="sources_and_keywords/channels.yaml"):
     """
     Fetch recent videos >= MIN_DURATION_SEC from each channel's uploads playlist
     and store new ones in the DB.
