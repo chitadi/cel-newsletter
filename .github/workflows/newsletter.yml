@@ -45,7 +45,7 @@ jobs:
           
         run: |
           git fetch origin data
-          git checkout data -- newsletter.db
+          git checkout origin/data -- newsletter.db
 
           # 1. Embed + rank + summarise articles
           python -m src.articles.embed_articles
