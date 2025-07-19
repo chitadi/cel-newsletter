@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
+        with:
+            fetch-depth: 0  
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -43,6 +44,9 @@ jobs:
           YT_COOKIE_FILE: cookies.txt
           
         run: |
+          git fetch origin data
+          git checkout data -- newsletter.db
+
           # 1. Embed + rank + summarise articles
           python -m src.articles.embed_articles
           python -m src.articles.rank
