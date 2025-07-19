@@ -9,6 +9,8 @@ on:
 jobs:
   harvest:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write      # allow pushes
     steps:
       - uses: actions/checkout@v3
 
