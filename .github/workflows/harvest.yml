@@ -38,9 +38,17 @@ jobs:
         run: |
           git config --global user.email "bot@github.com"
           git config --global user.name  "Newsletter Bot"
+          
+          cp newsletter.db /tmp/newsletter.db
+
+          
           git fetch origin data
           git checkout data
-          cp newsletter.db .
+
+         
+          cp /tmp/newsletter.db newsletter.db
+          
+          
           git add newsletter.db
           git commit -m "Update DB on $(date --iso-8601=seconds)" || echo "No changes"
           git push origin data
