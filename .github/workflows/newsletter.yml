@@ -30,8 +30,8 @@ jobs:
       
       - name: Write cookies.txt
         env:
-          YT_COOKIES: ${{ secrets.YT_COOKIES_FINAL }}
-        run: echo "$YT_COOKIES" > cookies.txt
+          YT_COOKIES_FINAL: ${{ secrets.YT_COOKIES_FINAL }}
+        run: echo "$YT_COOKIES_FINAL" > cookies.txt
   
       - name: Run full pipeline
         env:
