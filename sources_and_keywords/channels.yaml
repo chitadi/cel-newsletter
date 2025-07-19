@@ -30,7 +30,7 @@ channels:
   - name: How money works
     id: UCkCGANrihzExmu9QiqZpPlQ
   - name: Grant Rudow
-    id: UCdHqdfzdvT7tbAfeQM1gLn
+    id: UCdHqdfzdvT7tbAfeQM1gLnQ
   - name: PBS Terra
     id: UCpxYSWgxVt3Pyn1ovXsGQ0g
   - name: Half As Interesting
@@ -51,5 +51,21 @@ channels:
     id: UC4QZ_LsYcvcq7qOsOhpAX4A
   - name: Morning Brew
     id: UCqit4NtRDfdEHKX_zgmAwrg
-
-  
+  - name: Wendover Productions
+    id: UC9RM-iSvTu1uPJb8X5yp3EQ
+  - name: Logically Answered
+    id: UCZRoNJu1OszFqABP8AuJIuw
+  - name: Patrick Boyle on Finance
+    id: UCASM0cgfkJxQ1ICmRilfHLw
+  - name: Modern MBA
+    id: UCbzVRTkX3bzNZuBd9In4XyA
+  - name: Company Man
+    id: UCQMyhrt92_8XM0KgZH6VnRg
+  - name: The Hustle
+    id: UCkWVA1_vkY9GLyuLAre97AQ
+  - name: Primal Space
+    id: UClZbmi9JzfnB2CEb0fG8iew
+  - name: More Perfect Union
+    id: UCehBVAPy-bxmnbNARF-_tvA
+  - name: Neo
+    id: UCtYKe7-XbaDjpUwcU5x0bLg

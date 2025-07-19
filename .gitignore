@@ -4,3 +4,5 @@ subscribers.txt
 token.json
 client_secret.json
 .env*
+yt_cookies_min.txt
+yt_cookies_min.b64
