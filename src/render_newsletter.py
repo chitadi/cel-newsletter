@@ -11,13 +11,13 @@ TODAY = datetime.date.today()
 MAX_PER_SOURCE = 2
 
 
-def load_top_articles(limit=15):
+def load_top_articles(limit=5):
     eng = create_engine("sqlite:///newsletter.db")
     with Session(eng) as ssn:
         pool = (
             ssn.query(Article)
                .order_by(Article.score.desc())
-               .limit(limit)
+               .limit(limit * 3)
                .all()
         )
     
