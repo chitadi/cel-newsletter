@@ -11,7 +11,7 @@ TODAY = datetime.date.today()
 MAX_PER_SOURCE = 2
 
 
-def load_top_articles(limit=5):
+def load_top_articles(limit=3):
     eng = create_engine("sqlite:///newsletter.db")
     with Session(eng) as ssn:
         pool = (
