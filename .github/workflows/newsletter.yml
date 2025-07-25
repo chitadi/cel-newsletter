@@ -2,8 +2,10 @@ name: 📰 Weekly Newsletter
 
 on:
   schedule:
-    # 03:30 UTC = 09:00 IST every Monday
-    - cron: '30 3 * * *'
+    # 04:30 UTC = 10:00 IST
+    - cron: '30 4 * * 2'   # Tuesday
+    - cron: '30 4 * * 4'   # Thursday
+    - cron: '30 4 * * 6'   # Saturday
   workflow_dispatch:        # (optional) manual trigger
 
 jobs:
@@ -26,8 +28,6 @@ jobs:
         run: pip install -U yt-dlp
 
       - name: Init DB schema
-        env:
-          SEED_SUBSCRIBERS: ${{ secrets.SEED_SUBSCRIBERS }}
         run: python -m src.init_db
       
       - name: Write cookies.txt
@@ -75,4 +75,4 @@ jobs:
           python -m src.smtp_mailer
 
           # 4. House-keeping
-          # python -m src.housekeeping
+          python -m src.housekeeping
