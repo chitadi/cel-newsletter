@@ -13,6 +13,7 @@ pytz-deprecation-shim     # only if you explicitly import it
 # ── Networking & retries ───────────────────────────────────
 requests
 backoff
+lxml_html_clean
 
 # ── LLM & embeddings ───────────────────────────────────────
 openai                    # via OpenRouter key
