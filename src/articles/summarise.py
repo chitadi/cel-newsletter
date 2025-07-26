@@ -42,7 +42,7 @@ PROMPT_TMPL = textwrap.dedent("""\
     - Do not use any Markdown formatting (no **bold**, no # headings).
     - Keep the language clear and concise, suitable for mobile reading.
 
-    Example:
+    Example Response:
 
     Google has unveiled a new AI feature for Gmail aimed at speeding up email replies.
                               
@@ -50,7 +50,7 @@ PROMPT_TMPL = textwrap.dedent("""\
                               
     Google plans to expand the feature to Docs and Meet next.
 
-    Article:
+    Article to summarise is below:
     ---
     {text}
 """)
