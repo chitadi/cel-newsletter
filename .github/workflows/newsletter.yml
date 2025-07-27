@@ -6,7 +6,7 @@ on:
     # - cron: '30 4 * * 2'   # Tuesday
     # - cron: '30 4 * * 4'   # Thursday
     # - cron: '30 4 * * 6'   # Saturday
-    - cron: '30 7 * * *'   # Every day for testing changes
+    - cron: '30 4 * * *'   # Every day for testing changes
   workflow_dispatch:        # (optional) manual trigger
 
 jobs:
