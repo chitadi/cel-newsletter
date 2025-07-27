@@ -27,7 +27,7 @@ python-slugify
 
 # ── YouTube tools ──────────────────────────────────────────
 google-api-python-client
-youtube-transcript-api
+youtube-transcript-api>=0.6.2
 yt-dlp                    # (only if you really need local audio)
 
 # ── Utility ────────────────────────────────────────────────

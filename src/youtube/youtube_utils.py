@@ -248,6 +248,7 @@ get_video_transcript = enrich_video_with_transcript
 
 def refresh_transcripts(videos: Iterable):
     """Iterate through `videos` collection, enrich missing transcripts."""
+    processed = 0
     for v in videos:
         time.sleep(random.uniform(2, 4))
         try:
