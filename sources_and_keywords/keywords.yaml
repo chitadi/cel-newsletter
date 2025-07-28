@@ -50,7 +50,7 @@ scoring_categories:
 source_weights:
   YourStory:                            1.3
   Inc42:                                1.2
-  Entrackr:                             1.2
+  Entrackr:                             1.3
   Economic Times - Startups:            1.2
   Business Standard:                    1.1
   Moneycontrol:                         1.1
@@ -81,7 +81,7 @@ source_weights:
   CNBC Asia News:                       1.2
   Sifted (FT):                          1.2
   VentureBeat:                          1.2
-  The Verge:                            1.4
+  The Verge:                            1.5
   Hacker News:                          1.0
   EU-Startups:                          0.9
   The Next Web:                         1.1
@@ -89,7 +89,7 @@ source_weights:
   Startup News Asia:                    0.9
   Vulcan Post:                          0.9
   Bloomberg Technology:                 1.4
-  Reuters Business:                     1.25
+  Reuters Business:                     1.3
   The Fintech Times:                    0.8
   FinTech Futures:                      0.8
   FinTech Global:                       0.8
