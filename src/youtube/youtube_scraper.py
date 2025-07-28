@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv() 
 
 UTC = pytz.utc
-HOURS = 24 # lookback window in hours basically 7 days here
+HOURS = 72 # lookback window in hours basically 7 days here
 MIN_DURATION_SEC = 5 * 60  # 5 minutes
 
 def load_channels(config_path="sources_and_keywords/channels.yaml"):
@@ -32,7 +32,7 @@ def parse_iso_duration(duration):
     return hours * 3600 + minutes * 60 + seconds
 
 
-def fetch_videos(max_results_per_channel=5, config_path="sources_and_keywords/channels.yaml"):
+def fetch_videos(max_results_per_channel=7, config_path="sources_and_keywords/channels.yaml"):
     """
     Fetch recent videos >= MIN_DURATION_SEC from each channel's uploads playlist
     and store new ones in the DB.
