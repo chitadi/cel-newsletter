@@ -76,4 +76,4 @@ jobs:
           python -m src.smtp_mailer
 
           # 4. House-keeping
-          # python -m src.housekeeping
+          python -m src.housekeeping
