@@ -105,3 +105,14 @@ source_weights:
   cnbc - finance:                       1.2
   Indian Startup News Magazine:         0.7
   Wired - Tech:                         1.4
+  NPR:                                  1.1
+  HBR:                                  1.15
+  CNN:                                  1.2
+  The Entrepreneur:                     1.2
+  New York Times - Tech:                1.2
+  New York Times - Personal Tech:       1.1
+  New York Times - Business:            1.2
+  Fox News - Tech:                      1.2
+  Inc:                                  1.3
+  Gizmodo:                              1.2
+  CNET:                                 1.2
