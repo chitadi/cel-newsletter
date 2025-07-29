@@ -514,92 +514,92 @@
   paywall: false
   scrape_method: rss
 
-- name: NPR
-  url: https://www.npr.org
-  category: tech, startups
-  feed_url: https://feeds.npr.org/1019/rss.xml
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
+# - name: NPR
+#   url: https://www.npr.org
+#   category: tech, startups
+#   feed_url: https://feeds.npr.org/1019/rss.xml
+#   rss: true
+#   login_required: false
+#   paywall: false
+#   scrape_method: rss
 
-- name: HBR
-  url: https://hbr.org
-  category: tech, startups
-  feed_url: http://feeds.harvardbusiness.org/harvardbusiness?format=xml
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
+# - name: HBR
+#   url: https://hbr.org
+#   category: tech, startups
+#   feed_url: http://feeds.harvardbusiness.org/harvardbusiness?format=xml
+#   rss: true
+#   login_required: false
+#   paywall: false
+#   scrape_method: rss
 
-- name: Gizmodo
-  url: https://gizmodo.com
-  category: tech, startups
-  feed_url: https://gizmodo.com/feed
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
+# - name: Gizmodo
+#   url: https://gizmodo.com
+#   category: tech, startups
+#   feed_url: https://gizmodo.com/feed
+#   rss: true
+#   login_required: false
+#   paywall: false
+#   scrape_method: rss
 
-- name: CNET
-  url: https://www.cnet.com
-  category: tech, startups
-  feed_url: https://www.cnet.com/rss/news/
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
+# - name: CNET
+#   url: https://www.cnet.com
+#   category: tech, startups
+#   feed_url: https://www.cnet.com/rss/news/
+#   rss: true
+#   login_required: false
+#   paywall: false
+#   scrape_method: rss
 
-- name: Inc
-  url: https://www.inc.com
-  category: tech, startups
-  feed_url: https://www.inc.com/rss/
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
+# - name: Inc
+#   url: https://www.inc.com
+#   category: tech, startups
+#   feed_url: https://www.inc.com/rss/
+#   rss: true
+#   login_required: false
+#   paywall: false
+#   scrape_method: rss
 
-- name: The Entrepreneur
-  url: https://www.entrepreneur.com
-  category: tech, startups
-  feed_url: https://www.entrepreneur.com/rss-feed/latest
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
+# - name: The Entrepreneur
+#   url: https://www.entrepreneur.com
+#   category: tech, startups
+#   feed_url: https://www.entrepreneur.com/rss-feed/latest
+#   rss: true
+#   login_required: false
+#   paywall: false
+#   scrape_method: rss
 
-- name: New York Times - Tech
-  url: https://www.nytimes.com
-  category: tech, startups
-  feed_url: https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
+# - name: New York Times - Tech
+#   url: https://www.nytimes.com
+#   category: tech, startups
+#   feed_url: https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml
+#   rss: true
+#   login_required: false
+#   paywall: false
+#   scrape_method: rss
 
-- name: New York Times - Personal Tech
-  url: https://www.nytimes.com
-  category: tech, startups
-  feed_url: https://rss.nytimes.com/services/xml/rss/nyt/PersonalTech.xml
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
+# - name: New York Times - Personal Tech
+#   url: https://www.nytimes.com
+#   category: tech, startups
+#   feed_url: https://rss.nytimes.com/services/xml/rss/nyt/PersonalTech.xml
+#   rss: true
+#   login_required: false
+#   paywall: false
+#   scrape_method: rss
 
-- name: New York Times - Business
-  url: https://www.nytimes.com
-  category: tech, startups
-  feed_url: https://rss.nytimes.com/services/xml/rss/nyt/Business.xml
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
+# - name: New York Times - Business
+#   url: https://www.nytimes.com
+#   category: tech, startups
+#   feed_url: https://rss.nytimes.com/services/xml/rss/nyt/Business.xml
+#   rss: true
+#   login_required: false
+#   paywall: false
+#   scrape_method: rss
 
-- name: Fox News - Tech
-  url: https://www.foxnews.com
-  category: tech, startups
-  feed_url: https://moxie.foxnews.com/google-publisher/tech.xml
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
+# - name: Fox News - Tech
+#   url: https://www.foxnews.com
+#   category: tech, startups
+#   feed_url: https://moxie.foxnews.com/google-publisher/tech.xml
+#   rss: true
+#   login_required: false
+#   paywall: false
+#   scrape_method: rss
