@@ -3,7 +3,7 @@ name: 🔄 Daily Harvest
 on:
   schedule:
     # 02:30 UTC = 08:00 IST every day
-    - cron: '30 5 * * *'
+    - cron: '15 7 * * *'
   workflow_dispatch:
 
 jobs:
@@ -34,11 +34,12 @@ jobs:
           if [ ! -f newsletter.db ]; then
             python -m src.init_db
           fi
-  
+          
       - name: Harvest RSS & YouTube
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: |
+          python -m src.housekeeping
           python -m src.articles.run_harvest
           python -m src.youtube.youtube_scraper
 
