@@ -8,7 +8,7 @@ UTC = pytz.utc
 
 UA = {"User-Agent": "Mozilla/5.0"}
 
-def fetch_rss(source: dict, db: Session, horizon_hours=24):
+def fetch_rss(source: dict, db: Session, horizon_hours=36):
     cutoff = datetime.datetime.now(tz=UTC) - datetime.timedelta(hours=horizon_hours)
     feed = feedparser.parse(source["feed_url"])
     
