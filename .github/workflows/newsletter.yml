@@ -6,7 +6,7 @@ on:
     # - cron: '30 4 * * 2'   # Tuesday
     # - cron: '30 4 * * 4'   # Thursday
     # - cron: '30 4 * * 6'   # Saturday
-    - cron: '30 4 * * *'   # Every day for testing changes
+    - cron: '30 5 * * *'   # Every day for testing changes
   workflow_dispatch:        # (optional) manual trigger
 
 jobs:
@@ -28,8 +28,16 @@ jobs:
       - name: Upgrade yt-dlp
         run: pip install -U yt-dlp
 
-      - name: Init DB schema
-        run: python -m src.init_db
+      - name: Fetch existing DB
+        run: |
+          git fetch origin data
+          git checkout origin/data -- newsletter.db || true
+      
+      - name: Init DB schema if needed
+        run: |
+          if [ ! -f newsletter.db ]; then
+            python -m src.init_db
+          fi
       
       - name: Write cookies.txt
         env:
