@@ -3,7 +3,7 @@ name: 🔄 Daily Harvest
 on:
   schedule:
     # 02:30 UTC = 08:00 IST every day
-    - cron: '30 2 * * *'
+    - cron: '30 5 * * *'
   workflow_dispatch:
 
 jobs:
