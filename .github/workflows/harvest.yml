@@ -1,65 +1,65 @@
-# name: 🔄 Daily Harvest
+name: 🔄 Daily Harvest
 
-# on:
-#   schedule:
-#     # 02:30 UTC = 08:00 IST every day
-#     - cron: '30 2 * * *'
-#   workflow_dispatch:
+on:
+  schedule:
+    # 02:30 UTC = 08:00 IST every day
+    - cron: '30 2 * * *'
+  workflow_dispatch:
 
-# jobs:
-#   harvest:
-#     runs-on: ubuntu-latest
-#     permissions:
-#       contents: write      # allow pushes
-#     steps:
-#       - uses: actions/checkout@v4
-#         with:
-#           lfs: true
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # allow pushes
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
 
-#       - name: Set up Python
-#         uses: actions/setup-python@v4
-#         with:
-#           python-version: '3.10'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-#       - name: Install deps
-#         run: |
-#           python -m pip install --upgrade pip
-#           pip install -r requirements.txt
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-#       - name: Fetch existing DB
-#         run: |
-#           git fetch origin data
-#           git checkout origin/data -- newsletter.db || true
+      - name: Fetch existing DB
+        run: |
+          git fetch origin data
+          git checkout origin/data -- newsletter.db || true
       
-#       - name: Init DB schema if needed
-#         run: |
-#           if [ ! -f newsletter.db ]; then
-#             python -m src.init_db
-#           fi
+      - name: Init DB schema if needed
+        run: |
+          if [ ! -f newsletter.db ]; then
+            python -m src.init_db
+          fi
           
-#       - name: Harvest RSS & YouTube
-#         env:
-#           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-#         run: |
-#           python -m src.housekeeping
-#           python -m src.articles.run_harvest
-#           python -m src.youtube.youtube_scraper
+      - name: Harvest RSS & YouTube
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          python -m src.housekeeping
+          python -m src.articles.run_harvest
+          python -m src.youtube.youtube_scraper
 
-#       - name: Commit DB to data branch
-#         run: |
-#           git config --global user.email "bot@github.com"
-#           git config --global user.name  "Newsletter Bot"
+      - name: Commit DB to data branch
+        run: |
+          git config --global user.email "bot@github.com"
+          git config --global user.name  "Newsletter Bot"
           
-#           cp newsletter.db /tmp/newsletter.db
+          cp newsletter.db /tmp/newsletter.db
 
           
-#           git fetch origin data
-#           git checkout data
+          git fetch origin data
+          git checkout data
 
          
-#           cp /tmp/newsletter.db newsletter.db
+          cp /tmp/newsletter.db newsletter.db
           
           
-#           git add newsletter.db
-#           git commit -m "Update DB on $(date --iso-8601=seconds)" || echo "No changes"
-#           git push origin data
+          git add newsletter.db
+          git commit -m "Update DB on $(date --iso-8601=seconds)" || echo "No changes"
+          git push origin data

@@ -1,88 +1,88 @@
-# name: 📰 Weekly Newsletter
+name: 📰 Weekly Newsletter
 
-# on:
-#   schedule:
-#     # 04:30 UTC = 10:00 IST
-#     - cron: '30 4 * * 2'   # Tuesday
-#     - cron: '30 4 * * 4'   # Thursday
-#     - cron: '30 4 * * 6'   # Saturday
-#     # - cron: '45 7 * * *'   # Every day for testing changes
-#   workflow_dispatch:        # (optional) manual trigger
+on:
+  schedule:
+    # 04:30 UTC = 10:00 IST
+    - cron: '30 4 * * 2'   # Tuesday
+    - cron: '30 4 * * 4'   # Thursday
+    - cron: '30 4 * * 6'   # Saturday
+    # - cron: '45 7 * * *'   # Every day for testing changes
+  workflow_dispatch:        # (optional) manual trigger
 
-# jobs:
-#   build-and-send:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#         with:
-#             fetch-depth: 0  
-#             lfs: true
-#       - name: Set up Python
-#         uses: actions/setup-python@v4
-#         with:
-#           python-version: '3.10'
+jobs:
+  build-and-send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+            fetch-depth: 0  
+            lfs: true
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-#       - name: Install deps
-#         run: |
-#           python -m pip install --upgrade pip
-#           pip install -r requirements.txt
-#       - name: Upgrade yt-dlp
-#         run: pip install -U yt-dlp
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Upgrade yt-dlp
+        run: pip install -U yt-dlp
 
-#       - name: Fetch existing DB
-#         run: |
-#           git fetch origin data
-#           git checkout origin/data -- newsletter.db || true
+      - name: Fetch existing DB
+        run: |
+          git fetch origin data
+          git checkout origin/data -- newsletter.db || true
       
-#       - name: Init DB schema if needed
-#         run: |
-#           if [ ! -f newsletter.db ]; then
-#             python -m src.init_db
-#           fi
+      - name: Init DB schema if needed
+        run: |
+          if [ ! -f newsletter.db ]; then
+            python -m src.init_db
+          fi
       
-#       - name: Write cookies.txt
-#         env:
-#           YT_COOKIES_B64: ${{ secrets.YT_COOKIES_B64 }}
-#         run: |
-#           echo "$YT_COOKIES_B64" | base64 --decode > cookies.txt
-#       # example (put this before any Python steps that call yt-dlp)
+      - name: Write cookies.txt
+        env:
+          YT_COOKIES_B64: ${{ secrets.YT_COOKIES_B64 }}
+        run: |
+          echo "$YT_COOKIES_B64" | base64 --decode > cookies.txt
+      # example (put this before any Python steps that call yt-dlp)
 
-#       - name: Install & start Tor
-#         run: |
-#           sudo apt-get update -y
-#           sudo apt-get install -y tor
-#           # enable control port so your code can send NEWNYM
-#           echo 'ControlPort 9051' | sudo tee -a /etc/tor/torrc
-#           sudo systemctl start tor
-#           sleep 12          # give Tor ~10 s to bootstrap
+      - name: Install & start Tor
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y tor
+          # enable control port so your code can send NEWNYM
+          echo 'ControlPort 9051' | sudo tee -a /etc/tor/torrc
+          sudo systemctl start tor
+          sleep 12          # give Tor ~10 s to bootstrap
 
-#       - name: Run full pipeline
-#         env:
-#           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-#           YOUTUBE_API_KEY:    ${{ secrets.YOUTUBE_API_KEY }}
-#           SMTP_HOST: smtp.gmail.com
-#           SMTP_PORT: 587
-#           SMTP_USER: ${{ secrets.SMTP_USER }}
-#           SMTP_PASS: ${{ secrets.SMTP_PASS }}
-#           YT_COOKIE_FILE: cookies.txt
+      - name: Run full pipeline
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          YOUTUBE_API_KEY:    ${{ secrets.YOUTUBE_API_KEY }}
+          SMTP_HOST: smtp.gmail.com
+          SMTP_PORT: 587
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          YT_COOKIE_FILE: cookies.txt
           
-#         run: |
-#           git fetch origin data
-#           git checkout origin/data -- newsletter.db
+        run: |
+          git fetch origin data
+          git checkout origin/data -- newsletter.db
 
-#           # 1. Embed + rank + summarise articles
-#           python -m src.articles.embed_articles
-#           python -m src.articles.rank
-#           python -m src.articles.summarise
+          # 1. Embed + rank + summarise articles
+          python -m src.articles.embed_articles
+          python -m src.articles.rank
+          python -m src.articles.summarise
 
-#           # 2. Embed + rank + summarise YouTube
-#           python -m src.youtube.embed_videos
-#           python -m src.youtube.youtube_rank
-#           python -m src.youtube.youtube_summarise
+          # 2. Embed + rank + summarise YouTube
+          python -m src.youtube.embed_videos
+          python -m src.youtube.youtube_rank
+          python -m src.youtube.youtube_summarise
 
-#           # 3. Render & send
-#           python -m src.render_newsletter
-#           python -m src.smtp_mailer
+          # 3. Render & send
+          python -m src.render_newsletter
+          python -m src.smtp_mailer
 
-#           # 4. House-keeping
-#           python -m src.housekeeping
+          # 4. House-keeping
+          python -m src.housekeeping
