@@ -36,6 +36,7 @@ cache:
       git add newsletter.db
       git commit -m "Update DB on $(date --iso-8601=seconds)" || echo "No changes"
       git push https://${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git data
+      git lfs push https://${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git data
 
 harvest_daily:
   <<: *harvest_setup
