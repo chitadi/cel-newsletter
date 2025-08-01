@@ -27,6 +27,7 @@ before_script:
   - ls -lh newsletter.db || true        # debug: show file size
 
 inspect:
+  stage: inspect
   script: |
     file newsletter.db
     wc -c newsletter.db
