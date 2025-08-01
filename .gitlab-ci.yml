@@ -38,9 +38,16 @@ cache:
 harvest_daily:
   <<: *harvest_setup
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: always
-    - when: never
+  # Scheduled pipelines
+  - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    when: always
+
+  # Manual "Run pipeline" button or API trigger
+  - if: '$CI_PIPELINE_SOURCE == "web" || $CI_PIPELINE_SOURCE == "trigger"'
+    when: manual        # shows play ▶ button so you decide per run
+
+  # Fallback
+  - when: never
 
 .newsletter_common: &newsletter_setup
   stage: newsletter
@@ -70,6 +77,13 @@ harvest_daily:
 newsletter_run:
   <<: *newsletter_setup
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: always
-    - when: never
+  # Scheduled pipelines
+  - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    when: always
+
+  # Manual "Run pipeline" button or API trigger
+  - if: '$CI_PIPELINE_SOURCE == "web" || $CI_PIPELINE_SOURCE == "trigger"'
+    when: manual        # shows play ▶ button so you decide per run
+
+  # Fallback
+  - when: never
