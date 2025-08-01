@@ -1,8 +1,8 @@
 image: python:3.10
 
 stages:
-  - harvest
   - inspect
+  - harvest
   - newsletter        # runs after harvest
 
 variables:
