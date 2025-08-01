@@ -11,7 +11,7 @@ before_script:
   - apt-get update -y && apt-get install -y git-lfs
   - python -m pip install --upgrade pip
   - pip install -r requirements.txt
-  - git lfs install --skip-smudge    # pull pointers only
+  - git lfs install    # pull pointers only
   - git fetch origin data
   - git checkout origin/data -- newsletter.db || true
 
