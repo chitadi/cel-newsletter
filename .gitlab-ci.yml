@@ -2,7 +2,7 @@ image: python:3.10
 
 stages:
   - harvest
-  - Inspect_DB
+  - inspect
   - newsletter        # runs after harvest
 
 variables:
@@ -26,7 +26,7 @@ before_script:
   - git lfs checkout newsletter.db      # ← converts pointer to real SQLite
   - ls -lh newsletter.db || true        # debug: show file size
 
-Inspect_DB:
+inspect:
   script: |
     file newsletter.db
     wc -c newsletter.db
