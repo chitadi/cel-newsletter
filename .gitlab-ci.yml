@@ -25,7 +25,7 @@ before_script:
   - git lfs checkout newsletter.db      # ← converts pointer to real SQLite
   - ls -lh newsletter.db || true        # debug: show file size
 
-Inspect DB after LFS checkout:
+Inspect_DB:
   script: |
     file newsletter.db
     wc -c newsletter.db
