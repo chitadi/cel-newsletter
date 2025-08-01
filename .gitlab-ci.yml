@@ -1,92 +1,96 @@
 image: python:3.10
 
-stages:          # run harvest first so newsletter sees fresh DB
+stages:
   - harvest
-  - newsletter
+  - newsletter        # runs after harvest
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-
-before_script:
-  - apt-get update -y && apt-get install -y git-lfs
-  - python -m pip install --upgrade pip
-  - pip install -r requirements.txt
-  - git lfs install    # pull pointers only
-  - git fetch origin data
-  - git checkout origin/data -- newsletter.db || true
-  - git lfs pull origin data --include newsletter.db
 
 cache:
   paths:
     - .cache/pip
 
-.harvest_common: &harvest_setup
-  stage: harvest
-  script:
-    - |
-      if [ ! -f newsletter.db ]; then
-        python -m src.init_db
-      fi
-    - python -m src.articles.run_harvest
-    - python -m src.youtube.youtube_scraper
-    - |
-      git config user.name  "Newsletter Bot"
-      git config user.email "bot@example.com"
-      git checkout -B data
-      git add newsletter.db
-      git commit -m "Update DB on $(date --iso-8601=seconds)" || echo "No changes"
-      git push https://${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git data
-      git lfs push https://${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git data
+before_script:
+  # ---- system deps ----
+  - apt-get update -y && apt-get install -y git-lfs
+  - git lfs install
+  # ---- python deps ----
+  - python -m pip install --upgrade pip
+  - pip install -r requirements.txt
+  # ---- bring down latest DB (may still be a pointer) ----
+  - git fetch origin data
+  - git checkout origin/data -- newsletter.db || true
+  - git lfs pull --include newsletter.db
+  - git lfs checkout newsletter.db      # ← converts pointer to real SQLite
+  - ls -lh newsletter.db || true        # debug: show file size
 
+# ------------------------------------------------------------------------- #
+# Harvest stage — runs daily (or when manually triggered)
+# ------------------------------------------------------------------------- #
 harvest_daily:
-  <<: *harvest_setup
+  stage: harvest
+  script: |
+    # Initialise DB if the file doesn’t exist yet
+    if [ ! -f newsletter.db ]; then
+      python -m src.init_db
+    fi
+
+    # Scrape & append
+    python -m src.articles.run_harvest
+    python -m src.youtube.youtube_scraper
+
+    # Commit updated DB back to `data` branch
+    git config user.name  "Newsletter Bot"
+    git config user.email "bot@example.com"
+    git checkout -B data
+    git add newsletter.db
+    git commit -m "Daily DB $(date --iso-8601=seconds)" || echo "No changes"
+    git push https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git data
+    git lfs push https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git data
   rules:
-  # Scheduled pipelines
-  - if: '$CI_PIPELINE_SOURCE == "schedule"'
-    when: always
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "web" || $CI_PIPELINE_SOURCE == "trigger"'
+      when: manual
+    - when: never
 
-  # Manual "Run pipeline" button or API trigger
-  - if: '$CI_PIPELINE_SOURCE == "web" || $CI_PIPELINE_SOURCE == "trigger"'
-    when: manual        # shows play ▶ button so you decide per run
-
-  # Fallback
-  - when: never
-
-.newsletter_common: &newsletter_setup
-  stage: newsletter
-  script:
-    - |
-      if [ ! -f newsletter.db ]; then
-        python -m src.init_db
-      fi
-    - echo "$YT_COOKIES_B64" | base64 --decode > cookies.txt
-    - apt-get update -y && apt-get install -y tor
-      && echo 'ControlPort 9051' >> /etc/tor/torrc
-      && service tor start
-      && sleep 12
-    - |
-      git fetch origin data
-      git checkout origin/data -- newsletter.db
-      python -m src.articles.embed_articles
-      python -m src.articles.rank
-      python -m src.articles.summarise
-      python -m src.youtube.embed_videos
-      python -m src.youtube.youtube_rank
-      python -m src.youtube.youtube_summarise
-      python -m src.render_newsletter
-      python -m src.smtp_mailer
-      python -m src.housekeeping
-
+# ------------------------------------------------------------------------- #
+# Newsletter stage — Tue / Thu / Sat @ 10:00 IST
+# ------------------------------------------------------------------------- #
 newsletter_run:
-  <<: *newsletter_setup
+  stage: newsletter
+  script: |
+    # --- fetch DB built by latest harvest ---
+    git fetch origin data
+    git checkout origin/data -- newsletter.db
+    git lfs pull --include newsletter.db
+    git lfs checkout newsletter.db
+
+    # --- init schema (non-destructive) ---
+    python -m src.init_db
+
+    # --- prepare cookies & Tor ---
+    echo "$YT_COOKIES_B64" | base64 --decode > cookies.txt
+    apt-get update -y && apt-get install -y tor
+    echo 'ControlPort 9051' >> /etc/tor/torrc
+    service tor start
+    sleep 12
+
+    # --- pipeline proper ---
+    python -m src.articles.embed_articles
+    python -m src.articles.rank
+    python -m src.articles.summarise
+    python -m src.youtube.embed_videos
+    python -m src.youtube.youtube_rank
+    python -m src.youtube.youtube_summarise
+    python -m src.render_newsletter
+    python -m src.smtp_mailer
+    python -m src.housekeeping
   rules:
-  # Scheduled pipelines
-  - if: '$CI_PIPELINE_SOURCE == "schedule"'
-    when: always
-
-  # Manual "Run pipeline" button or API trigger
-  - if: '$CI_PIPELINE_SOURCE == "web" || $CI_PIPELINE_SOURCE == "trigger"'
-    when: manual        # shows play ▶ button so you decide per run
-
-  # Fallback
-  - when: never
+    # 04:30 UTC = 10:00 IST => Tue(2), Thu(4), Sat(6)
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "web" || $CI_PIPELINE_SOURCE == "trigger"'
+      when: manual
+    - when: never
