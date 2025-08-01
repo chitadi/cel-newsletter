@@ -9,7 +9,6 @@ DB_URL = "sqlite:///newsletter.db"
 
 HARDCODED_SUBS = [
 "f20220012@pilani.bits-pilani.ac.in",
-"chittemadithya@gmail.com",
 "f20240912@pilani.bits-pilani.ac.in",
 "f20220264@pilani.bits-pilani.ac.in",
 "f20230230@pilani.bits-pilani.ac.in",
@@ -48,7 +47,6 @@ HARDCODED_SUBS = [
 "f20230220@pilani.bits-pilani.ac.in",
 "f20241269@pilani.bits-pilani.ac.in",
 "f20240125@pilani.bits-pilani.ac.in",
-"f20220004@pilani.bits-pilani.ac.in",
 "varshasreekumar2003@gmail.com"
 ]
 
