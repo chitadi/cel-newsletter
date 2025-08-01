@@ -25,6 +25,13 @@ before_script:
   - git lfs checkout newsletter.db      # ← converts pointer to real SQLite
   - ls -lh newsletter.db || true        # debug: show file size
 
+Inspect DB after LFS checkout:
+  script: |
+    file newsletter.db
+    wc -c newsletter.db
+    head -n 5 newsletter.db | cat -v   # prints first lines safely
+
+
 # ------------------------------------------------------------------------- #
 # Harvest stage — runs daily (or when manually triggered)
 # ------------------------------------------------------------------------- #
