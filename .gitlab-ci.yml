@@ -19,10 +19,14 @@ before_script:
   # ---- python deps ----
   - python -m pip install --upgrade pip
   - pip install -r requirements.txt
+
+  - export GIT_CRED="https://oauth2:${LFS_PAT}@gitlab.com/${CI_PROJECT_PATH}.git"
+  - git config --global url."${GIT_CRED}".insteadOf "https://gitlab.com/${CI_PROJECT_PATH}.git"
+
   # ---- bring down latest DB (may still be a pointer) ----
   - git fetch origin data
   - git checkout origin/data -- newsletter.db || true
-  - git lfs pull --include newsletter.db
+  - git lfs fetch --include newsletter.db origin data
   - git lfs checkout newsletter.db      # ← converts pointer to real SQLite
   - ls -lh newsletter.db || true        # debug: show file size
 
