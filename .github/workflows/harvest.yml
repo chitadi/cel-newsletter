@@ -41,7 +41,6 @@ jobs:
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: |
-          python -m src.housekeeping
           python -m src.articles.run_harvest
           python -m src.youtube.youtube_scraper
 
