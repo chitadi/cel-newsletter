@@ -26,9 +26,11 @@ before_script:
   # ---- bring down latest DB (may still be a pointer) ----
   - git fetch origin data
   - git checkout origin/data -- newsletter.db || true
-  - git lfs fetch --include newsletter.db origin data
-  - git lfs checkout newsletter.db      # ← converts pointer to real SQLite
-  - ls -lh newsletter.db || true        # debug: show file size
+
+  # authenticate once (already done earlier)
+  - git lfs fetch --include newsletter.db        # <-- new
+  - git lfs checkout newsletter.db               # <-- new
+  - ls -lh newsletter.db      # debug: show file size # should now show ~170 MB, not 134 B
 
 inspect:
   stage: inspect
