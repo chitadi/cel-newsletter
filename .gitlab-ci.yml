@@ -2,6 +2,7 @@ image: python:3.10
 
 stages:
   - harvest
+  - Inspect_DB
   - newsletter        # runs after harvest
 
 variables:
