@@ -12,29 +12,45 @@ cache:
   paths:
     - .cache/pip
 
+# before_script:
+#   # ---- system deps ----
+#   - apt-get update -y && apt-get install -y git-lfs
+#   - git lfs install
+#   # ---- python deps ----
+#   - python -m pip install --upgrade pip
+#   - pip install -r requirements.txt
+
+#   - export GIT_CRED="https://oauth2:${LFS_PAT}@gitlab.com/${CI_PROJECT_PATH}.git"
+#   - git config --global url."${GIT_CRED}".insteadOf "https://gitlab.com/${CI_PROJECT_PATH}.git"
+
+#   # ---- bring down latest DB (may still be a pointer) ----
+#   - git fetch origin data
+#   - git checkout origin/data -- newsletter.db
+
+#   - |
+#     REV=$(git rev-parse origin/data)
+#     git lfs fetch origin "$REV" --include newsletter.db
+#     git lfs checkout newsletter.db
+
+#   - git lfs fetch origin refs/heads/data --include newsletter.db
+#   - git lfs checkout newsletter.db
+#   - ls -lh newsletter.db   # should now show ~173 MB (SQLite), not 134 B
 before_script:
-  # ---- system deps ----
   - apt-get update -y && apt-get install -y git-lfs
   - git lfs install
-  # ---- python deps ----
+  - git config lfs.url https://oauth2:${LFS_PAT}@gitlab.com/${CI_PROJECT_PATH}.git/info/lfs
+
   - python -m pip install --upgrade pip
   - pip install -r requirements.txt
 
-  - export GIT_CRED="https://oauth2:${LFS_PAT}@gitlab.com/${CI_PROJECT_PATH}.git"
-  - git config --global url."${GIT_CRED}".insteadOf "https://gitlab.com/${CI_PROJECT_PATH}.git"
-
-  # ---- bring down latest DB (may still be a pointer) ----
+  # get the data branch and its LFS blob
   - git fetch origin data
-  - git checkout origin/data -- newsletter.db
+  - git checkout data
+  - git lfs pull origin data --include="newsletter.db"
 
-  - |
-    REV=$(git rev-parse origin/data)
-    git lfs fetch origin "$REV" --include newsletter.db
-    git lfs checkout newsletter.db
-
-  - git lfs fetch origin refs/heads/data --include newsletter.db
-  - git lfs checkout newsletter.db
-  - ls -lh newsletter.db   # should now show ~173 MB (SQLite), not 134 B
+  # debug if something’s off
+  - ls -lh newsletter.db
+  - git lfs logs last
 
 
 inspect:
