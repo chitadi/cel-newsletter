@@ -27,6 +27,11 @@ before_script:
   - git fetch origin data
   - git checkout origin/data -- newsletter.db
 
+  - |
+    REV=$(git rev-parse origin/data)
+    git lfs fetch origin "$REV" --include newsletter.db
+    git lfs checkout newsletter.db
+
   - git lfs fetch origin refs/heads/data --include newsletter.db
   - git lfs checkout newsletter.db
   - ls -lh newsletter.db   # should now show ~173 MB (SQLite), not 134 B
