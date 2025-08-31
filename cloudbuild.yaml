@@ -34,7 +34,6 @@ steps:
         ls -lh newsletter.db
         
         echo "Setup complete ✅"
-    secretEnv: ['_GITHUB_TOKEN']
 
   # Cleanup job (runs first to clean the 173MB database)
   - name: 'python:3.10'
