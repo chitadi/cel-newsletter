@@ -3,6 +3,7 @@
 # cloudbuild.yaml (minimal: setup + cleanup)
 
 steps:
+  # 1) Setup: only workspace prep (LFS + DB)
   - name: 'python:3.10'
     id: 'setup'
     entrypoint: 'bash'
@@ -10,17 +11,25 @@ steps:
       - '-c'
       - |
         echo "🚀 Starting pipeline (Trigger: ${_TRIGGER_TYPE})..."
+
+        # Install git-lfs to pull the DB
         apt-get update -y && apt-get install -y git-lfs
         git lfs install --force
+
+        # Ensure both branches exist locally and are up to date
         git fetch --prune origin +refs/heads/*:refs/remotes/origin/*
+
+        # Pull DB from data branch, then place it in working tree on main
         git checkout -B data refs/remotes/origin/data
         git lfs pull --include="newsletter.db"
         cp newsletter.db /tmp/newsletter.db
         git checkout -B main refs/remotes/origin/main
         cp /tmp/newsletter.db newsletter.db
         ls -lh newsletter.db
+
         echo "Setup complete ✅"
 
+  # 2) Cleanup (trigger: _TRIGGER_TYPE=cleanup)
   - name: 'python:3.10'
     id: 'cleanup'
     entrypoint: 'bash'
@@ -34,17 +43,21 @@ steps:
         fi
 
         echo "🧹 Starting database cleanup..."
+
         # ---- Secrets sanity (trim and validate owner/repo) ----
         if [[ -z "$_GITHUB_TOKEN" ]]; then echo "❌ _GITHUB_TOKEN missing"; exit 1; fi
-        REPO_RAW="$_GITHUB_REPO"
-        REPO="$(printf '%s' "$REPO_RAW" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        REPO="$_GITHUB_REPO"
+        # Trim whitespace/newlines just in case
+        REPO="$(printf '%s' "$REPO" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
         if [[ -z "$REPO" ]]; then echo "❌ _GITHUB_REPO missing"; exit 1; fi
-        case "$REPO" in */*) : ;; *) echo "❌ _GITHUB_REPO malformed (expected owner/repo), got: '$REPO_RAW'"; exit 1;; esac
+        case "$REPO" in */*) : ;; *) echo "❌ _GITHUB_REPO malformed (expected owner/repo), got: '$_GITHUB_REPO'"; exit 1;; esac
         echo "🔗 Using repo: $REPO"
 
+        # ---- Work on MAIN (code lives here) ----
         git fetch --prune origin +refs/heads/*:refs/remotes/origin/*
         git checkout -B main refs/remotes/origin/main
 
+        # Fresh container: install deps for this step
         apt-get update -y && apt-get install -y git-lfs
         git lfs install
         git config --global user.email "bot@github.com"
@@ -52,7 +65,11 @@ steps:
         git config --global --add safe.directory /workspace
 
         python -m pip install --upgrade pip
-        [[ -f requirements.txt ]] && pip install -r requirements.txt || echo "⚠️ requirements.txt not found on main"
+        if [[ -f requirements.txt ]]; then
+          pip install -r requirements.txt
+        else
+          echo "⚠️ requirements.txt not found on main; skipping pip install"
+        fi
 
         echo "📊 BEFORE:"; ls -lh newsletter.db || true
         if [[ -f src/housekeeping.py || -f src/housekeeping/__init__.py ]]; then
@@ -62,9 +79,11 @@ steps:
         fi
         echo "📊 AFTER:"; ls -lh newsletter.db || true
 
+        # Save cleaned DB temporarily
         cp newsletter.db /tmp/newsletter_cleared.db || true
         rm -f newsletter.db
 
+        # ---- Switch to DATA to commit the DB ----
         git checkout -B data refs/remotes/origin/data
         git lfs install
         cp /tmp/newsletter_cleared.db newsletter.db || true
@@ -73,8 +92,9 @@ steps:
         git add newsletter.db || true
         git commit -m "Database cleanup $(date --iso-8601=seconds)" || echo "⚠️ No changes to commit"
 
+        # Push via tokenized remote (avoid 'origin' entirely)
         git remote remove push-tmp 2>/dev/null || true
-        git remote add push-tmp "https://oauth2:$._GITHUB_TOKEN@github.com/$REPO.git"
+        git remote add push-tmp "https://oauth2:$_GITHUB_TOKEN@github.com/$REPO.git"
         git push push-tmp data
 
         echo "✅ Cleanup complete!"
