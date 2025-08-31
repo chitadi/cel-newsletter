@@ -25,6 +25,11 @@ steps:
         pip install -r requirements.txt
         pip install -U yt-dlp
         
+        # Create __init__.py files to make src a proper Python package
+        touch src/__init__.py
+        touch src/articles/__init__.py
+        touch src/youtube/__init__.py
+        
         # Get DB from GitHub data branch
         git fetch origin data
         git checkout data
