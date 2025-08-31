@@ -1,0 +1,217 @@
+# Google Cloud Build configuration
+# Handles both harvest (daily) and newsletter (Tue/Thu/Sat)
+
+steps:
+  # Common setup steps
+  - name: 'python:3.10'
+    id: 'setup'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "🚀 Starting pipeline (Trigger: ${_TRIGGER_TYPE})..."
+        
+        # Install git-lfs
+        apt-get update -y && apt-get install -y git-lfs
+        git lfs install
+        
+        # Configure git for GitHub access
+        git config --global user.email "bot@github.com"
+        git config --global user.name "Newsletter Bot"
+        
+        # Install Python dependencies
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -U yt-dlp
+        
+        # Get DB from GitHub data branch
+        git fetch origin data
+        git checkout data
+        git lfs pull --include="newsletter.db"
+        cp newsletter.db /tmp/newsletter.db
+        git checkout main
+        cp /tmp/newsletter.db newsletter.db
+        ls -lh newsletter.db
+        
+        echo "Setup complete ✅"
+    secretEnv: ['_GITHUB_TOKEN']
+
+  # Cleanup job (runs first to clean the 173MB database)
+  - name: 'python:3.10'
+    id: 'cleanup'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Only run cleanup if this is a cleanup trigger
+        if [[ "${_TRIGGER_TYPE}" != "cleanup" ]]; then
+          echo "⏭️ Skipping cleanup"
+          exit 0
+        fi
+        
+        echo "🧹 Starting database cleanup..."
+        
+        # Check current size
+        echo "📊 Database BEFORE cleanup:"
+        ls -lh newsletter.db
+        
+        # Run housekeeping
+        python -m src.housekeeping
+        
+        # Check size after cleanup
+        echo "📊 Database AFTER cleanup:"
+        ls -lh newsletter.db
+        
+        # Commit cleared DB back to data branch
+        cp newsletter.db /tmp/newsletter_cleared.db
+        rm newsletter.db
+        git fetch origin data
+        git checkout data
+        git pull origin data
+        cp /tmp/newsletter_cleared.db newsletter.db
+        
+        echo "📊 Final database size in data branch:"
+        ls -lh newsletter.db
+        
+        git add newsletter.db
+        git commit -m "Database cleanup $(date --iso-8601=seconds)" || echo "⚠️ No changes to commit"
+        git push https://oauth2:${_GITHUB_TOKEN}@github.com/${_GITHUB_REPO}.git data
+        
+        echo "✅ Cleanup complete! Database cleared and committed."
+    secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO']
+
+  # Harvest job (runs daily)
+  - name: 'python:3.10'
+    id: 'harvest'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Only run harvest if this is a harvest trigger
+        if [[ "${_TRIGGER_TYPE}" != "harvest" ]]; then
+          echo "⏭️ Skipping harvest"
+          exit 0
+        fi
+        
+        echo "🌾 Starting harvest..."
+        
+        # Initialize DB if needed
+        if [ ! -f newsletter.db ]; then
+          python -m src.init_db
+        fi
+        
+        # Run harvest
+        python -m src.articles.run_harvest
+        python -m src.youtube.youtube_scraper
+        
+        # Commit updated DB to data branch
+        cp newsletter.db /tmp/newsletter_updated.db
+        rm newsletter.db
+        
+        git fetch origin data
+        git checkout data
+        git pull origin data
+        
+        cp /tmp/newsletter_updated.db newsletter.db
+        
+        git add newsletter.db
+        git commit -m "Daily harvest $(date --iso-8601=seconds)" || echo "No changes"
+        git push https://oauth2:${_GITHUB_TOKEN}@github.com/${_GITHUB_REPO}.git data
+        
+        echo "✅ Harvest complete!"
+    secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO']
+    env:
+      - 'YOUTUBE_API_KEY=${_YOUTUBE_API_KEY}'
+
+  # Newsletter job (runs Tue/Thu/Sat)
+  - name: 'python:3.10'
+    id: 'newsletter'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Only run newsletter if this is a newsletter trigger
+        if [[ "${_TRIGGER_TYPE}" != "newsletter" ]]; then
+          echo "⏭️ Skipping newsletter"
+          exit 0
+        fi
+        
+        echo "📰 Starting newsletter generation..."
+        
+        # Get fresh DB from data branch
+        rm newsletter.db || true
+        git fetch origin data
+        git checkout data
+        git lfs pull --include="newsletter.db"
+        cp newsletter.db /tmp/newsletter.db
+        git checkout main
+        cp /tmp/newsletter.db newsletter.db
+        ls -lh newsletter.db
+        
+        # Initialize if needed
+        python -m src.init_db
+        
+        # Set up YouTube cookies
+        echo "${_YT_COOKIES_B64}" | base64 --decode > cookies.txt
+        export YT_COOKIE_FILE="$(pwd)/cookies.txt"
+        
+        # Install and start Tor
+        apt-get update -y && apt-get install -y tor
+        echo 'ControlPort 9051' >> /etc/tor/torrc
+        service tor start
+        sleep 12
+        
+        # Run full newsletter pipeline
+        python -m src.articles.embed_articles
+        python -m src.articles.rank
+        python -m src.articles.summarise
+        python -m src.youtube.embed_videos
+        python -m src.youtube.youtube_rank
+        python -m src.youtube.youtube_summarise
+        python -m src.render_newsletter
+        python -m src.smtp_mailer
+        python -m src.housekeeping
+        
+        echo "📊 Database after housekeeping:"
+        ls -lh newsletter.db
+        
+        # Commit cleared DB back to data branch
+        cp newsletter.db /tmp/newsletter_cleared.db
+        rm newsletter.db
+        git fetch origin data
+        git checkout data
+        git pull origin data
+        cp /tmp/newsletter_cleared.db newsletter.db
+        
+        git add newsletter.db
+        git commit -m "Cleared DB after newsletter $(date --iso-8601=seconds)" || true
+        git push https://oauth2:${_GITHUB_TOKEN}@github.com/${_GITHUB_REPO}.git data
+        
+        echo "✅ Newsletter complete and DB cleared!"
+    secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO', '_YT_COOKIES_B64', '_OPENROUTER_API_KEY', '_YOUTUBE_API_KEY', '_SMTP_USER', '_SMTP_PASS']
+    env:
+      - 'SMTP_HOST=smtp.gmail.com'
+      - 'SMTP_PORT=587'
+
+# Define secrets from Secret Manager
+availableSecrets:
+  secretManager:
+    - versionName: projects/${PROJECT_ID}/secrets/github-token/versions/latest
+      env: '_GITHUB_TOKEN'
+    - versionName: projects/${PROJECT_ID}/secrets/github-repo/versions/latest
+      env: '_GITHUB_REPO'
+    - versionName: projects/${PROJECT_ID}/secrets/YT_COOKIES_MIN_B64/versions/latest
+      env: '_YT_COOKIES_B64'
+    - versionName: projects/${PROJECT_ID}/secrets/OPENROUTER_API_KEY/versions/latest
+      env: '_OPENROUTER_API_KEY'
+    - versionName: projects/${PROJECT_ID}/secrets/YOUTUBE_API_KEY/versions/latest
+      env: '_YOUTUBE_API_KEY'
+    - versionName: projects/${PROJECT_ID}/secrets/SMTP_USER/versions/latest
+      env: '_SMTP_USER'
+    - versionName: projects/${PROJECT_ID}/secrets/SMTP_PASS/versions/latest
+      env: '_SMTP_PASS'
+
+options:
+  machineType: 'E2_HIGHCPU_8'
+  diskSizeGb: 100
+timeout: 3600s  # 1 hour timeout
