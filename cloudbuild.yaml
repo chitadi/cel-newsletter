@@ -6,8 +6,6 @@ steps:
   - name: 'python:3.10'
     id: 'setup'
     entrypoint: 'bash'
-    env:
-      - 'PYTHONPATH=/workspace'   # Cloud Build checks out your repo at /workspace
     args:
       - '-c'
       - |
@@ -25,9 +23,6 @@ steps:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -U yt-dlp
-
-        # Add current directory to Python path
-        export PYTHONPATH="${PYTHONPATH}:$(pwd)"
         
         # Get DB from GitHub data branch
         git fetch origin data
@@ -60,7 +55,7 @@ steps:
         ls -lh newsletter.db
         
         # Run housekeeping
-        python -m src.housekeeping
+        python src/housekeeping.py
         
         # Check size after cleanup
         echo "📊 Database AFTER cleanup:"
