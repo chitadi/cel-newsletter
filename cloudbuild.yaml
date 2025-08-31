@@ -80,9 +80,6 @@ steps:
         echo "✅ Cleanup complete!"
 
     secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO']
-    volumes:
-      - name: pip-cache
-        path: /root/.cache/pip
 
   # 3) Harvest (trigger: _TRIGGER_TYPE=harvest)
   - name: 'python:3.10'
@@ -133,9 +130,6 @@ steps:
         echo "✅ Harvest complete!"
 
     secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO', '_YOUTUBE_API_KEY']
-    volumes:
-      - name: pip-cache
-        path: /root/.cache/pip
 
   # 4) Newsletter (trigger: _TRIGGER_TYPE=newsletter)
   - name: 'python:3.10'
@@ -211,10 +205,7 @@ steps:
         echo "✅ Newsletter complete and DB cleared!"
 
     secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO', '_YT_COOKIES_B64', '_OPENROUTER_API_KEY', '_YOUTUBE_API_KEY', '_SMTP_USER', '_SMTP_PASS']
-    volumes:
-      - name: pip-cache
-        path: /root/.cache/pip
-
+    
 # Secrets
 availableSecrets:
   secretManager:
