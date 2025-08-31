@@ -1,6 +1,5 @@
 # Google Cloud Build configuration
 # Handles both harvest (daily) and newsletter (Tue/Thu/Sat)
-
 steps:
   # 1) Setup: only workspace prep (LFS + DB)
   - name: 'python:3.10'
@@ -10,15 +9,8 @@ steps:
       - '-c'
       - |
         echo "🚀 Starting pipeline (Trigger: ${_TRIGGER_TYPE})..."
-
-        # Install git-lfs to pull the DB
         apt-get update -y && apt-get install -y git-lfs
         git lfs install --force
-
-        # (Optional) ensure src is a package (ideally commit these files instead)
-        touch src/__init__.py src/articles/__init__.py src/youtube/__init__.py || true
-
-        # Get DB from GitHub data branch
         git fetch origin data
         git checkout data
         git lfs pull --include="newsletter.db"
@@ -26,81 +18,69 @@ steps:
         git checkout main
         cp /tmp/newsletter.db newsletter.db
         ls -lh newsletter.db
-
         echo "Setup complete ✅"
 
   # 2) Cleanup (trigger: _TRIGGER_TYPE=cleanup)
-- name: 'python:3.10'
-  id: 'cleanup'
-  entrypoint: 'bash'
-  env:
-    - 'PYTHONPATH=/workspace'
-  args:
-    - '-c'
-    - |
-      if [[ "${_TRIGGER_TYPE}" != "cleanup" ]]; then
-        echo "⏭️ Skipping cleanup"; exit 0
-      fi
+  - name: 'python:3.10'
+    id: 'cleanup'
+    entrypoint: 'bash'
+    env:
+      - 'PYTHONPATH=/workspace'
+    args:
+      - '-c'
+      - |
+        if [[ "${_TRIGGER_TYPE}" != "cleanup" ]]; then
+          echo "⏭️ Skipping cleanup"; exit 0
+        fi
 
-      echo "🧹 Starting database cleanup..."
+        echo "🧹 Starting database cleanup..."
+        [[ -n "${_GITHUB_TOKEN:-}" ]] || { echo "❌ _GITHUB_TOKEN missing"; exit 1; }
+        [[ -n "${_GITHUB_REPO:-}"  ]] || { echo "❌ _GITHUB_REPO missing (owner/repo)"; exit 1; }
 
-      # Fail fast if secrets missing
-      [[ -n "${_GITHUB_TOKEN:-}" ]] || { echo "❌ _GITHUB_TOKEN missing"; exit 1; }
-      [[ -n "${_GITHUB_REPO:-}"  ]] || { echo "❌ _GITHUB_REPO missing (owner/repo)"; exit 1; }
+        # work on main (code lives here)
+        git checkout main
+        git pull --ff-only origin main || true
 
-      # ----- Work on MAIN for code (housekeeping) -----
-      git checkout main
-      git pull --ff-only origin main || true
+        apt-get update -y && apt-get install -y git-lfs
+        git lfs install
+        git config --global user.email "bot@github.com"
+        git config --global user.name "Newsletter Bot"
+        git config --global --add safe.directory /workspace
 
-      # Fresh container: install deps
-      apt-get update -y && apt-get install -y git-lfs
-      git lfs install
-      git config --global user.email "bot@github.com"
-      git config --global user.name "Newsletter Bot"
-      git config --global --add safe.directory /workspace
+        python -m pip install --upgrade pip
+        [[ -f requirements.txt ]] && pip install -r requirements.txt || echo "⚠️ no requirements.txt on main"
 
-      python -m pip install --upgrade pip
-      if [[ -f requirements.txt ]]; then
-        pip install -r requirements.txt
-      else
-        echo "⚠️ requirements.txt not found on main; skipping pip install"
-      fi
+        echo "📊 BEFORE:"; ls -lh newsletter.db || true
 
-      echo "📊 Database BEFORE cleanup:"; ls -lh newsletter.db || true
+        if [[ -f src/housekeeping.py || -f src/housekeeping/__init__.py ]]; then
+          python -m src.housekeeping
+        else
+          echo "⚠️ src.housekeeping not found on main; skipping"
+        fi
 
-      # Run housekeeping only if code exists
-      if [[ -f src/housekeeping.py || -f src/housekeeping/__init__.py ]]; then
-        python -m src.housekeeping
-      else
-        echo "⚠️ src.housekeeping not found on main; skipping"
-      fi
+        echo "📊 AFTER:"; ls -lh newsletter.db || true
 
-      echo "📊 Database AFTER cleanup:"; ls -lh newsletter.db || true
+        cp newsletter.db /tmp/newsletter_cleared.db || true
+        rm -f newsletter.db
 
-      # Stash cleaned DB to temp
-      cp newsletter.db /tmp/newsletter_cleared.db || true
-      rm -f newsletter.db
+        # switch to data to commit DB
+        git fetch origin data
+        git checkout data
+        git pull --ff-only origin data
+        git lfs install
 
-      # ----- Switch to DATA to commit the DB -----
-      git fetch origin data
-      git checkout data
-      git pull --ff-only origin data
-      git lfs install
+        cp /tmp/newsletter_cleared.db newsletter.db || true
+        ls -lh newsletter.db || true
 
-      # Put the cleaned DB into the data branch
-      cp /tmp/newsletter_cleared.db newsletter.db || true
-      echo "📊 Final database size in data branch:"; ls -lh newsletter.db || true
+        git add newsletter.db || true
+        git commit -m "Database cleanup $(date --iso-8601=seconds)" || echo "⚠️ No changes to commit"
 
-      git add newsletter.db || true
-      git commit -m "Database cleanup $(date --iso-8601=seconds)" || echo "⚠️ No changes to commit"
+        git remote remove push-tmp 2>/dev/null || true
+        git remote add push-tmp "https://oauth2:${_GITHUB_TOKEN}@github.com/${_GITHUB_REPO}.git"
+        git push push-tmp data
 
-      # Push via tokenized remote (do NOT use 'origin')
-      git remote remove push-tmp 2>/dev/null || true
-      git remote add push-tmp "https://oauth2:${_GITHUB_TOKEN}@github.com/${_GITHUB_REPO}.git"
-      git push push-tmp data
-
-      echo "✅ Cleanup complete!"
-  secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO']
+        echo "✅ Cleanup complete!"
+    secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO']
 
   # 3) Harvest (trigger: _TRIGGER_TYPE=harvest)
   - name: 'python:3.10'
