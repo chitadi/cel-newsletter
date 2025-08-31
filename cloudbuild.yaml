@@ -6,6 +6,8 @@ steps:
   - name: 'python:3.10'
     id: 'setup'
     entrypoint: 'bash'
+    env:
+      - 'PYTHONPATH=/workspace'   # Cloud Build checks out your repo at /workspace
     args:
       - '-c'
       - |
