@@ -27,6 +27,7 @@ steps:
         ls -lh newsletter.db
   
         echo "Setup complete ✅"
+      secretEnv: ['_GITHUB_TOKEN']
 
  - name: 'python:3.10'
     id: 'cleanup'
