@@ -41,7 +41,7 @@ steps:
         fi
 
         echo "🧹 Starting database cleanup..."
-        if [ -z "$_GITHUB_TOKEN" ] || [ -z "$_GITHUB_REPO" ]; then
+        if [ -z "$$_GITHUB_TOKEN" ] || [ -z "$$_GITHUB_REPO" ]; then
           echo "❌ missing _GITHUB_TOKEN or _GITHUB_REPO"; exit 1
         fi
 
@@ -131,7 +131,7 @@ steps:
         git commit -m "Daily harvest $(date --iso-8601=seconds)" || echo "No changes"
 
         git remote remove push-tmp 2>/dev/null || true
-        git remote add push-tmp "https://oauth2:$_GITHUB_TOKEN@github.com/$_GITHUB_REPO.git"
+        git remote add push-tmp "https://oauth2:$$_GITHUB_TOKEN@github.com/$$_GITHUB_REPO.git"
         git push push-tmp data
 
         echo "✅ Harvest complete!"
