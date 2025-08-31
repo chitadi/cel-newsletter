@@ -2,6 +2,7 @@
 # Handles both harvest (daily) and newsletter (Tue/Thu/Sat)
 
 steps:
+  # 1) Setup: only workspace prep (LFS + DB)
   - name: 'python:3.10'
     id: 'setup'
     entrypoint: 'bash'
@@ -9,14 +10,14 @@ steps:
       - '-c'
       - |
         echo "🚀 Starting pipeline (Trigger: ${_TRIGGER_TYPE})..."
-  
-        # Install git-lfs only to be able to pull the DB
+
+        # Install git-lfs to pull the DB
         apt-get update -y && apt-get install -y git-lfs
         git lfs install --force
-  
-        # (Optional) ensure src is a proper package if not committed yet
+
+        # (Optional) ensure src is a package (ideally commit these files instead)
         touch src/__init__.py src/articles/__init__.py src/youtube/__init__.py || true
-  
+
         # Get DB from GitHub data branch
         git fetch origin data
         git checkout data
@@ -25,11 +26,11 @@ steps:
         git checkout main
         cp /tmp/newsletter.db newsletter.db
         ls -lh newsletter.db
-  
-        echo "Setup complete ✅"
-      secretEnv: ['_GITHUB_TOKEN']
 
- - name: 'python:3.10'
+        echo "Setup complete ✅"
+
+  # 2) Cleanup (trigger: _TRIGGER_TYPE=cleanup)
+  - name: 'python:3.10'
     id: 'cleanup'
     entrypoint: 'bash'
     env:
@@ -40,58 +41,51 @@ steps:
         if [[ "${_TRIGGER_TYPE}" != "cleanup" ]]; then
           echo "⏭️ Skipping cleanup"; exit 0
         fi
-  
+
         echo "🧹 Starting database cleanup..."
-  
-        # Fail fast on missing secrets
         [[ -n "${_GITHUB_TOKEN:-}" ]] || { echo "❌ _GITHUB_TOKEN missing"; exit 1; }
         [[ -n "${_GITHUB_REPO:-}"  ]] || { echo "❌ _GITHUB_REPO missing (owner/repo)"; exit 1; }
-  
-        # Fresh container → install deps again
+
         apt-get update -y && apt-get install -y git-lfs
         git lfs install
         git config --global user.email "bot@github.com"
         git config --global user.name "Newsletter Bot"
         git config --global --add safe.directory /workspace
-  
+
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-  
+
         echo "📊 Database BEFORE cleanup:"; ls -lh newsletter.db || true
-  
-        # Run housekeeping
         python -m src.housekeeping || { echo "⚠️ Housekeeping failed; continuing"; }
-  
         echo "📊 Database AFTER cleanup:"; ls -lh newsletter.db || true
-  
-        # Prepare commit to data branch
+
         cp newsletter.db /tmp/newsletter_cleared.db || true
         rm -f newsletter.db
-  
+
         git fetch origin data
         git checkout data
         git pull --ff-only origin data
         git lfs install
-  
+
         cp /tmp/newsletter_cleared.db newsletter.db || true
         echo "📊 Final database size in data branch:"; ls -lh newsletter.db || true
-  
+
         git add newsletter.db || true
         git commit -m "Database cleanup $(date --iso-8601=seconds)" || echo "⚠️ No changes to commit"
-  
-        # Push with token (avoid credential helpers)
+
         git remote remove push-tmp 2>/dev/null || true
         git remote add push-tmp "https://oauth2:${_GITHUB_TOKEN}@github.com/${_GITHUB_REPO}.git"
         git push push-tmp data
-  
+
         echo "✅ Cleanup complete!"
+
     secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO']
     volumes:
       - name: pip-cache
         path: /root/.cache/pip
 
-
- - name: 'python:3.10'
+  # 3) Harvest (trigger: _TRIGGER_TYPE=harvest)
+  - name: 'python:3.10'
     id: 'harvest'
     entrypoint: 'bash'
     env:
@@ -103,46 +97,48 @@ steps:
         if [[ "${_TRIGGER_TYPE}" != "harvest" ]]; then
           echo "⏭️ Skipping harvest"; exit 0
         fi
-  
+
         apt-get update -y && apt-get install -y git-lfs
         git lfs install
         git config --global user.email "bot@github.com"
         git config --global user.name "Newsletter Bot"
         git config --global --add safe.directory /workspace
-  
+
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-  
+
         if [ ! -f newsletter.db ]; then
           python -m src.init_db
         fi
-  
+
         python -m src.articles.run_harvest
         python -m src.youtube.youtube_scraper
-  
+
         cp newsletter.db /tmp/newsletter_updated.db
         rm -f newsletter.db
-  
+
         git fetch origin data
         git checkout data
         git pull --ff-only origin data
         git lfs install
-  
+
         cp /tmp/newsletter_updated.db newsletter.db
         git add newsletter.db || true
         git commit -m "Daily harvest $(date --iso-8601=seconds)" || echo "No changes"
-  
+
         git remote remove push-tmp 2>/dev/null || true
         git remote add push-tmp "https://oauth2:${_GITHUB_TOKEN}@github.com/${_GITHUB_REPO}.git"
         git push push-tmp data
-  
+
         echo "✅ Harvest complete!"
+
     secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO', '_YOUTUBE_API_KEY']
     volumes:
       - name: pip-cache
         path: /root/.cache/pip
 
- - name: 'python:3.10'
+  # 4) Newsletter (trigger: _TRIGGER_TYPE=newsletter)
+  - name: 'python:3.10'
     id: 'newsletter'
     entrypoint: 'bash'
     env:
@@ -155,18 +151,17 @@ steps:
         if [[ "${_TRIGGER_TYPE}" != "newsletter" ]]; then
           echo "⏭️ Skipping newsletter"; exit 0
         fi
-  
+
         apt-get update -y && apt-get install -y git-lfs tor
         git lfs install
         git config --global user.email "bot@github.com"
         git config --global user.name "Newsletter Bot"
         git config --global --add safe.directory /workspace
-  
+
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -U yt-dlp
-  
-        # Fresh DB from data branch
+
         rm -f newsletter.db || true
         git fetch origin data
         git checkout data
@@ -175,19 +170,16 @@ steps:
         git checkout main
         cp /tmp/newsletter.db newsletter.db
         ls -lh newsletter.db
-  
+
         python -m src.init_db
-  
-        # YouTube cookies
+
         echo "${_YT_COOKIES_B64}" | base64 --decode > cookies.txt
         export YT_COOKIE_FILE="$(pwd)/cookies.txt"
-  
-        # Tor
+
         echo 'ControlPort 9051' >> /etc/tor/torrc
         service tor start
         sleep 12
-  
-        # Pipeline
+
         python -m src.articles.embed_articles
         python -m src.articles.rank
         python -m src.articles.summarise
@@ -197,32 +189,33 @@ steps:
         python -m src.render_newsletter
         python -m src.smtp_mailer
         python -m src.housekeeping
-  
+
         echo "📊 Database after housekeeping:"; ls -lh newsletter.db
-  
-        # Commit cleared DB back to data
+
         cp newsletter.db /tmp/newsletter_cleared.db
         rm -f newsletter.db
+
         git fetch origin data
         git checkout data
         git pull --ff-only origin data
         git lfs install
         cp /tmp/newsletter_cleared.db newsletter.db
-  
+
         git add newsletter.db || true
         git commit -m "Cleared DB after newsletter $(date --iso-8601=seconds)" || true
-  
+
         git remote remove push-tmp 2>/dev/null || true
         git remote add push-tmp "https://oauth2:${_GITHUB_TOKEN}@github.com/${_GITHUB_REPO}.git"
         git push push-tmp data
-  
+
         echo "✅ Newsletter complete and DB cleared!"
+
     secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO', '_YT_COOKIES_B64', '_OPENROUTER_API_KEY', '_YOUTUBE_API_KEY', '_SMTP_USER', '_SMTP_PASS']
     volumes:
       - name: pip-cache
         path: /root/.cache/pip
 
-# Define secrets from Secret Manager
+# Secrets
 availableSecrets:
   secretManager:
     - versionName: projects/${PROJECT_ID}/secrets/github-token/versions/latest
@@ -247,4 +240,5 @@ options:
   volumes:
     - name: pip-cache
       path: /root/.cache/pip
-timeout: 3600s  # 1 hour timeout
+
+timeout: 3600s
