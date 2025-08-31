@@ -54,7 +54,7 @@ steps:
         echo "🧹 Starting database cleanup..."
 
          # Set Python path so modules can be found
-        export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+        export PYTHONPATH="$${PYTHONPATH}:$(pwd)"
         
         # Check current size
         echo "📊 Database BEFORE cleanup:"
@@ -101,7 +101,7 @@ steps:
         echo "🌾 Starting harvest..."
 
         # Set Python path so modules can be found
-        export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+        export PYTHONPATH="$${PYTHONPATH}:$(pwd)"
         
         # Initialize DB if needed
         if [ ! -f newsletter.db ]; then
@@ -147,7 +147,7 @@ steps:
         echo "📰 Starting newsletter generation..."
 
         # Set Python path so modules can be found
-        export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+        export PYTHONPATH="$${PYTHONPATH}:$(pwd)"
         
         # Get fresh DB from data branch
         rm newsletter.db || true
