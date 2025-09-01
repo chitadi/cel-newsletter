@@ -33,7 +33,7 @@ steps:
     entrypoint: 'bash'
     env:
       - 'PYTHONPATH=/workspace'
-      - 'YOUTUBE_API_KEY=${_YOUTUBE_API_KEY}'
+      - 'YOUTUBE_API_KEY=$$_YOUTUBE_API_KEY'
     args:
       - '-c'
       - |
@@ -112,7 +112,7 @@ steps:
 
         python -m src.init_db
 
-        echo "${_YT_COOKIES_B64}" | base64 --decode > cookies.txt
+        echo "$$_YT_COOKIES_B64" | base64 --decode > cookies.txt
         export YT_COOKIE_FILE="$(pwd)/cookies.txt"
 
         echo 'ControlPort 9051' >> /etc/tor/torrc
