@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv() 
 
 UTC = pytz.utc
-HOURS = 36 # lookback window in hours basically 7 days here
+HOURS = 24 # lookback window in hours basically 7 days here
 MIN_DURATION_SEC = 5 * 60  # 5 minutes
 
 def load_channels(config_path="sources_and_keywords/channels.yaml"):
