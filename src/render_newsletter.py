@@ -8,7 +8,7 @@ from src.models import Article, Video
 
 
 TODAY = datetime.date.today()
-MAX_PER_SOURCE = 2
+MAX_PER_SOURCE = 1
 
 
 def load_top_articles(limit=5):
