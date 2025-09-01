@@ -33,13 +33,18 @@ steps:
     entrypoint: 'bash'
     env:
       - 'PYTHONPATH=/workspace'
-      - 'YOUTUBE_API_KEY=$$_YOUTUBE_API_KEY'
     args:
       - '-c'
       - |
         if [ "$_TRIGGER_TYPE" != "harvest" ]; then
           echo "⏭️ Skipping harvest"; exit 0
         fi
+
+        # Export the secret as a regular environment variable for Python
+        export YOUTUBE_API_KEY="$$_YOUTUBE_API_KEY"
+        
+        # Debug: Check if the key is being set (shows length, not the actual key)
+        echo "YOUTUBE_API_KEY length: ${#YOUTUBE_API_KEY}"
 
         apt-get update -y && apt-get install -y git-lfs
         git lfs install
@@ -90,6 +95,12 @@ steps:
         if [ "$_TRIGGER_TYPE" != "newsletter" ]; then
           echo "⏭️ Skipping newsletter"; exit 0
         fi
+
+        # In the newsletter step, add these exports:
+        export OPENROUTER_API_KEY="$$_OPENROUTER_API_KEY"
+        export YOUTUBE_API_KEY="$$_YOUTUBE_API_KEY"
+        export SMTP_USER="$$_SMTP_USER"
+        export SMTP_PASS="$$_SMTP_PASS"
 
         apt-get update -y && apt-get install -y git-lfs tor
         git lfs install
