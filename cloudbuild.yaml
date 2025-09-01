@@ -54,7 +54,7 @@ steps:
           python -m src.init_db
         fi
 
-        python -m src.articles.run_harvest
+        # python -m src.articles.run_harvest
         python -m src.youtube.youtube_scraper
 
         cp newsletter.db /tmp/newsletter_updated.db
