@@ -5,6 +5,8 @@ from openai import OpenAI
 import re, sqlalchemy as sa
 from sqlalchemy.orm import Session
 from src.models import Article
+import time
+import random
 
 import re
 
@@ -83,7 +85,7 @@ def summarise_batch(limit: int = 5) -> None:
         )
 
         # 3️⃣  Summarise each selected article
-        for art in pool:
+        for i, art in enumerate(pool):
             if ROUNDUP_RE.search(art.title) or COHORT_RE.search(art.title):
                 with Session(eng) as ssn:
                     ssn.query(art).delete()  # remove roundup articles
@@ -105,6 +107,11 @@ def summarise_batch(limit: int = 5) -> None:
                     print(f"⚠️  Empty summary for: {art.title[:60]}")
                     continue
                 art.summary = clean_summary(content)
+                # Add delay after each API call (except the last one)
+                if i < len(pool) - 1:
+                    sleep_time = random.uniform(2, 4)  # 2-4 seconds random delay
+                    print(f"💤 Sleeping {sleep_time:.1f}s to avoid rate limits...")
+                    time.sleep(sleep_time)
 
             except Exception as e:
                 print(f"❌ LLM error on: {art.title[:60]} – {e}")
