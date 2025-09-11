@@ -88,7 +88,7 @@ def summarise_batch(limit: int = 5) -> None:
         for i, art in enumerate(pool):
             if ROUNDUP_RE.search(art.title) or COHORT_RE.search(art.title):
                 with Session(eng) as ssn:
-                    ssn.query(art).delete()  # remove roundup articles
+                    ssn.delete(art)  # remove roundup articles
                 continue                      # skip roundup articles
 
             snippet = art.text[:6_000]
