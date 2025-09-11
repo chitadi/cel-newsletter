@@ -195,9 +195,9 @@ def _fetch_transcript_ytapi(video_id: str) -> Optional[str]:
     # First try preferred English keys → then any language → then auto‑translate.
     for langs in (PREFERRED_EN_KEYS, ()):  # empty tuple means “any”
         try:
-            data = YouTubeTranscriptApi.get_transcript(
-                video_id, languages=list(langs), proxies=PROXIES
-            )
+            transcripts = YouTubeTranscriptApi.list_transcripts(video_id, proxies=PROXIES)
+            transcript = transcripts.find_transcript(list(langs)) if langs else transcripts.find_transcript(transcripts._languages)
+            data = transcript.fetch()
             if data:
                 return "\n".join(chunk["text"].strip() for chunk in data if chunk["text"].strip())
         except (TranscriptsDisabled, NoTranscriptFound):
