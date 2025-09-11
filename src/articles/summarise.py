@@ -86,14 +86,14 @@ def summarise_batch(limit: int = 5) -> None:
 
         # 3️⃣  Summarise each selected article
         for i, art in enumerate(pool):
-            if ROUNDUP_RE.search(art.title) or COHORT_RE.search(art.title):
-                with Session(eng) as ssn:
-                    ssn.delete(art)  # remove roundup articles
-                continue                      # skip roundup articles
-
-            snippet = art.text[:6_000]
-
             try:
+                if ROUNDUP_RE.search(art.title) or COHORT_RE.search(art.title):
+                    with Session(eng) as ssn:
+                        ssn.delete(art)  # remove roundup articles
+                    continue                      # skip roundup articles
+    
+                snippet = art.text[:6_000]
+
                 completion = client.chat.completions.create(
                     model="deepseek/deepseek-r1-0528:free",
                     messages=[{
