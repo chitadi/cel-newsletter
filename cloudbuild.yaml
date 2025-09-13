@@ -159,9 +159,9 @@ steps:
   #       git push push-tmp data
 
   #       echo "✅ Newsletter complete and DB cleared!"
-  #   secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO', '_YT_COOKIES_B64', '_OPENROUTER_API_KEY', '_YOUTUBE_API_KEY', '_SMTP_USER', '_SMTP_PASS']
+    # secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO', '_YT_COOKIES_B64', '_OPENROUTER_API_KEY', '_YOUTUBE_API_KEY', '_SMTP_USER', '_SMTP_PASS']
 
-    # Newsletter step - Fixed to avoid git conflicts
+    # Newsletter step - Following the working harvest pattern
   - name: 'python:3.10'
     id: 'newsletter'
     entrypoint: 'bash'
@@ -176,44 +176,35 @@ steps:
           echo "⏭️ Skipping newsletter"; exit 0
         fi
 
-        echo "📰 Starting newsletter generation..."
-
-        # Export all environment variables
+        # Export environment variables (using same pattern as harvest)
         export OPENROUTER_API_KEY="$$_OPENROUTER_API_KEY"
-        export YOUTUBE_API_KEY="$$_YOUTUBE_API_KEY"
+        export YOUTUBE_API_KEY="$$_YOUTUBE_API_KEY"  
         export SMTP_USER="$$_SMTP_USER"
         export SMTP_PASS="$$_SMTP_PASS"
 
-        # Install dependencies
+        # Setup (same as harvest step)
         apt-get update -y && apt-get install -y git-lfs tor
-        git lfs install --force
+        git lfs install
         git config --global user.email "bot@github.com"
         git config --global user.name "Newsletter Bot"
         git config --global --add safe.directory /workspace
 
+        # Install Python dependencies
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -U yt-dlp
 
-        # Create Python package files
-        touch src/__init__.py
-        touch src/articles/__init__.py  
-        touch src/youtube/__init__.py
-
-        # Check if we have source files
-        echo "Source files check:"
-        ls -la src/ || echo "ERROR: No src directory!"
-        
-        # Database should already be available from setup step
-        if [ ! -f newsletter.db ]; then
-          echo "ERROR: No newsletter.db found"
-          exit 1
-        fi
-        
-        echo "Database size before processing:"
+        # Get fresh database from data branch (same logic as harvest)
+        rm -f newsletter.db || true
+        git fetch origin data
+        git checkout data
+        git lfs pull --include="newsletter.db"
+        cp newsletter.db /tmp/newsletter.db
+        git checkout main
+        cp /tmp/newsletter.db newsletter.db
         ls -lh newsletter.db
 
-        # Initialize database schema
+        # Initialize database
         python -m src.init_db
 
         # Set up YouTube cookies
@@ -225,79 +216,39 @@ steps:
         service tor start
         sleep 12
 
-        # Run newsletter pipeline
-        echo "Running article processing..."
+        # Run full newsletter pipeline
         python -m src.articles.embed_articles
         python -m src.articles.rank
         python -m src.articles.summarise
-        
-        echo "Running video processing..."
         python -m src.youtube.embed_videos
         python -m src.youtube.youtube_rank
         python -m src.youtube.youtube_summarise
-        
-        echo "Rendering and sending newsletter..."
         python -m src.render_newsletter
         python -m src.smtp_mailer
-        
-        echo "Running housekeeping..."
         python -m src.housekeeping
 
         echo "📊 Database after housekeeping:"
         ls -lh newsletter.db
 
-        # Save the processed database for the next step
-        cp newsletter.db /tmp/newsletter_final.db
+        # Save database back to data branch (same pattern as harvest)
+        cp newsletter.db /tmp/newsletter_cleared.db
+        rm -f newsletter.db
 
-        echo "✅ Newsletter processing complete!"
-    secretEnv: ['_YT_COOKIES_B64', '_OPENROUTER_API_KEY', '_YOUTUBE_API_KEY', '_SMTP_USER', '_SMTP_PASS']
-
-  # Separate step just for saving the database back
-  - name: 'python:3.10'
-    id: 'save-newsletter-db'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        if [ "$_TRIGGER_TYPE" != "newsletter" ]; then
-          echo "⏭️ Skipping database save"; exit 0
-        fi
-
-        echo "💾 Saving processed database to data branch..."
-        
-        # Configure git
-        apt-get update -y && apt-get install -y git-lfs
-        git lfs install --force
-        git config --global user.email "bot@github.com"
-        git config --global user.name "Newsletter Bot"
-        
-        # Get the processed database
-        if [ ! -f /tmp/newsletter_final.db ]; then
-          echo "ERROR: No processed database found"
-          exit 1
-        fi
-
-        # Clone fresh repo to avoid conflicts
-        cd /tmp
-        git clone "https://oauth2:$$_GITHUB_TOKEN@github.com/$$_GITHUB_REPO.git" fresh-repo
-        cd fresh-repo
-        
-        git fetch origin
+        git fetch origin data
         git checkout data
-        git lfs pull --include="newsletter.db"
-        
-        # Replace with processed database
-        cp /tmp/newsletter_final.db newsletter.db
-        
-        echo "Final database size:"
-        ls -lh newsletter.db
-        
-        git add newsletter.db
-        git commit -m "Newsletter processed DB $(date --iso-8601=seconds)" || echo "No changes"
-        git push origin data
+        git pull --ff-only origin data
+        git lfs install
+        cp /tmp/newsletter_cleared.db newsletter.db
 
-        echo "✅ Database saved to data branch!"
-    secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO']
+        git add newsletter.db || true
+        git commit -m "Cleared DB after newsletter $(date --iso-8601=seconds)" || true
+
+        git remote remove push-tmp 2>/dev/null || true
+        git remote add push-tmp "https://oauth2:$$_GITHUB_TOKEN@github.com/$$_GITHUB_REPO.git"
+        git push push-tmp data
+
+        echo "✅ Newsletter complete and DB cleared!"
+    secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO', '_YT_COOKIES_B64', '_OPENROUTER_API_KEY', '_YOUTUBE_API_KEY', '_SMTP_USER', '_SMTP_PASS']
 
 # Secrets
 availableSecrets:
