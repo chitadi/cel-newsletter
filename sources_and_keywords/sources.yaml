@@ -558,3 +558,12 @@
   login_required: false
   paywall: false
   scrape_method: rss
+
+- name: OfficeChai
+  url: https://officechai.com
+  category: business, startups, india
+  feed_url: https://officechai.com/feed
+  rss: true
+  login_required: false
+  paywall: false
+  scrape_method: rss
