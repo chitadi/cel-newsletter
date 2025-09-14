@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from src.models import Article
 from src.articles.article_extractor import extract_text 
 from bs4 import BeautifulSoup
+import dateutil.parser
 
 UTC = pytz.utc 
 
@@ -14,15 +15,35 @@ def fetch_rss(source: dict, db: Session, horizon_hours=24):
     
     for entry in feed.entries:
         img = None
-        if not hasattr(entry, "published_parsed"):
-            continue
-        published = datetime.datetime(*entry.published_parsed[:6], tzinfo=pytz.utc)
-        if published.tzinfo is None:      # some feeds omit tz
-            published = published.replace(tzinfo=UTC)
+        published = None
+        if hasattr(entry, "published_parsed") and entry.published_parsed:
+            # Normal case (RFC822 etc.)
+            published = datetime.datetime(*entry.published_parsed[:6], tzinfo=pytz.utc)
+        else:
+            # Fallback to raw string
+            raw_date = getattr(entry, "published", None) or entry.get("pubDate")
+            if raw_date:
+                try:
+                    published = dateutil.parser.parse(raw_date)
+                    if published.tzinfo is None:
+                        published = published.replace(tzinfo=UTC)
+                    print(f"⚠️ Fallback date parse for {source['name']}: {raw_date}")
+                except Exception as e:
+                    print(f"❌ Failed to parse date for {source['name']}: {raw_date} ({e})")
+                    continue
+            else:
+                print(f"❌ No date found for entry in {source['name']}, skipping")
+                continue
+
         if published < cutoff:
             continue
+            
+        # --- URL handling ---
+        url = getattr(entry, "link", None)
+        if not url:
+            print(f"❌ No link found for entry in {source['name']}, skipping")
+            continue
 
-        url = entry.link
         aid = hashlib.sha256(url.encode()).hexdigest()
         if db.query(Article).get(aid):
             continue
