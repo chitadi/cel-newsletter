@@ -46,7 +46,16 @@
 - name: Moneycontrol
   url: https://www.moneycontrol.com
   category: finance
-  feed_url: https://www.moneycontrol.com/rss/latestnews.xml
+  feed_url: https://news.google.com/rss/search?q=when:24h+allinurl:moneycontrol.com&hl=en-US&gl=US&ceid=US:en
+  rss: true
+  login_required: false
+  paywall: false
+  scrape_method: rss
+
+- name: The Morning Context
+  url: https://themorningcontext.com
+  category: Indian Startups
+  feed_url: https://news.google.com/rss/search?q=when:24h+allinurl:themorningcontext.com&hl=en-US&gl=US&ceid=US:en
   rss: true
   login_required: false
   paywall: false
