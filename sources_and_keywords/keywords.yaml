@@ -1,6 +1,6 @@
 scoring_categories:
-  # --- Tier 1: Basic Topic Identification (Low Weight) ---
-  # What is the article broadly about?
+  # # --- Tier 1: Basic Topic Identification (Low Weight) ---
+  # # What is the article broadly about?
   - name: Indian_stuff
     weight: 3
     keywords: [India, micro-VC, quick-commerce, Crore, INR, Lakh, SEBI, UPI, NPCI, RBI, Rs, rupee, defence-tech, aerospace, space, space-tech, DHRP, IPO-bound]
@@ -13,17 +13,14 @@ scoring_categories:
   - name: Topic_Tech_Generic
     weight: 3
     keywords: [ai, artificial intelligence, ml, machine learning, cloud, saas, api, open source, software, hardware, platform, product, google, openai, microsoft, meta, anthropic]
-  - name: Topic_Finance_Generic
-    weight: 2
-    keywords: [economy, stock, fund, mn, billion, million, financial results, shares, q1, q2, q3 ,q4]
 
-  # --- Tier 2: Specific Concepts & Metrics (Medium Weight) ---
-  # Does the article discuss specific, substantive details?
+  # # --- Tier 2: Specific Concepts & Metrics (Medium Weight) ---
+  # # Does the article discuss specific, substantive details?
   - name: Concept_Startup_Funding
-    weight: 3
+    weight: 4
     keywords: [series, seed, investor, venture capital, vc, angel, round, pre-seed, funding, Series A, Series B, seed funding, angel investment, fundraise]
   - name: Concept_Startup_Metrics
-    weight: 4
+    weight: 5
     keywords: [bootstrapped, accelerator, incubator, growth, scale, traction, CAC, burn rate, valuation, unicorn, decacorn, IPO, SPAC, exit, acquisition, merger, pivot, product launch, MVP, go-to-market]
   - name: Concept_Tech_Specifics
     weight: 3
@@ -32,20 +29,31 @@ scoring_categories:
     weight: 3
     keywords: [ipo, initial public offering, earnings, quarterly results, downround, regulation, sec filing, fintech, neobank, insurtech, m&a, profit, revenue, runway, cash flow, capital, buyout, pat, FY24, FY25, portfolio,]
 
-  # --- Tier 3: High-Impact & Quality Signals (High Weight) ---
-  # Is this a significant, "juicy" story? Is it well-researched?
-  - name: Quality_Analysis
-    weight: 8
-    keywords: [in-depth, investigative, exclusive, behind-the-scenes, long-form, deep dive, detailed analysis, data-driven, proprietary research, expert insights, whitepaper, case study, industry report, market analysis]
-  - name: Impact_MarketShift
-    weight: 5
-    keywords: [market disruption, paradigm shift, economic impact, deglobalization, reshoring, supply chain crisis, AI race, green tech, sustainability, ESG, talent wars]
-  - name: Impact_MajorEvent
-    weight: 7
-    keywords: [lawsuit, regulatory probe, antitrust, data breach, corporate governance, boardroom shakeup, CEO resignation, hostile takeover, AI regulation, H-1B visa changes, GDPR]
-  - name: Quality_Source
-    weight: 2
-    keywords: [byline, senior editor, chief correspondent, award-winning, Pulitzer Prize, cited by, peer-reviewed, op-ed, executive interview, think tank]
+  # # --- Tier 3: Deep-Dive & Niche Topics (High Weight) ---
+  # # Does the article provide in-depth analysis or cover niche areas?
+  - name: Financial_Substance  
+    weight: 6
+    keywords: [revenue growth, burn rate, runway, cash flow, valuation cut, down round, liquidation preference, board seats, voting rights, drag-along, anti-dilution, waterfall analysis, cap table]
+
+  - name: Operational_Metrics
+    weight: 4
+    keywords: [user acquisition cost, lifetime value, gross margin, unit economics, monthly active users, daily active users, retention rate, conversion rate, average order value, take rate]
+
+  - name: Strategic_Moves
+    weight: 4
+    keywords: [market expansion, vertical integration, horizontal expansion, strategic partnership, joint venture, licensing deal, distribution agreement, merger talks, acquisition target, spin-off]
+
+
+semantic_keywords:
+  - quality_terms: ["analysis", "research", "study", "investigation", "data shows", "according to", "exclusive", "sources say", "documents", "report", "findings", "insights", "deep dive", "comprehensive", "detailed", "thorough", "evidence", "methodology", "survey", "poll", "interview", "expert", "specialist", "academic", "peer-reviewed", "whitepaper"]
+
+  - growth_terms: ["growth", "expansion", "scale", "milestone", "achievement", "breakthrough", "success", "launch", "revenue", "users", "adoption", "traction", "increase", "surge", "boom", "rise", "uptick", "momentum", "acceleration", "progress", "development", "advancement", "improvement", "gains", "performance", "metrics", "KPI", "targets", "goals"]
+
+  - innovation_terms: ["innovation", "technology", "development", "breakthrough", "advancement", "feature", "product", "platform", "research", "engineering", "technical", "prototype", "beta", "alpha", "release", "update", "upgrade", "enhancement", "optimization", "algorithm", "framework", "architecture", "infrastructure", "patent", "intellectual property", "R&D", "laboratory", "experiment"]
+
+  - business_terms: ["funding", "investment", "partnership", "acquisition", "merger", "strategy", "expansion", "deal", "agreement", "collaboration", "venture", "round", "capital", "financing", "valuation", "equity", "stake", "shares", "IPO", "public", "private", "syndicate", "consortium", "joint venture", "strategic alliance", "distribution", "licensing", "franchise"]
+
+  - governance_terms: ["CEO", "founder", "board", "leadership", "executive", "management", "appointment", "hiring", "team", "organization", "director", "officer", "chairman", "president", "vice president", "C-suite", "senior", "promotion", "recruitment", "talent", "human resources", "organizational", "corporate", "governance", "structure", "hierarchy"]
 
 source_weights:
   YourStory:                            1.15
@@ -113,4 +121,4 @@ source_weights:
   Wired - Science:                      1.2
   Wired - Deepdive:                     1.3
   Wired - Business:                     1.2
-  OfficeChai:                           1.1
+  OfficeChai:                           1.15
