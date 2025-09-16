@@ -36,3 +36,7 @@ PyYAML
 
 # ── Tor proxy support (optional) ───────────────────────────
 stem                       # only if you actually use it
+
+# -- playwright and selenium stuff ------------------------------
+playwright==1.40.0
+lxml==4.9.3
