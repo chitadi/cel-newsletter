@@ -25,20 +25,29 @@ steps:
         echo "===================="
 
         apt-get update -y && apt-get install -y git-lfs
+
+        git remote set-url origin "https://oauth2:$$_GITHUB_TOKEN@github.com/$$_GITHUB_REPO.git"
         git lfs install --force
+        git fetch origin data
+        git show origin/data:newsletter.db > newsletter.db 2>/dev/null || echo "Could not fetch DB, will create new one"
+        
+        if [ -f newsletter.db ]; then
+          echo "Database ready: $(ls -lh newsletter.db)"
+        fi
 
-        # Ensure both branches exist locally and are up to date
-        git fetch --prune origin +refs/heads/*:refs/remotes/origin/*
+        # # Ensure both branches exist locally and are up to date
+        # git fetch --prune origin +refs/heads/*:refs/remotes/origin/*
 
-        # Pull DB from data, then place it in working tree on main
-        git checkout -B data refs/remotes/origin/data
-        git lfs pull --include="newsletter.db"
-        cp newsletter.db /tmp/newsletter.db
-        git checkout -B main refs/remotes/origin/main
-        cp /tmp/newsletter.db newsletter.db
-        ls -lh newsletter.db
+        # # Pull DB from data, then place it in working tree on main
+        # git checkout -B data refs/remotes/origin/data
+        # git lfs pull --include="newsletter.db"
+        # cp newsletter.db /tmp/newsletter.db
+        # git checkout -B main refs/remotes/origin/main
+        # cp /tmp/newsletter.db newsletter.db
+        # ls -lh newsletter.db
 
         echo "Setup complete ✅"
+    secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO']
 
   # 3) Harvest (trigger: _TRIGGER_TYPE=harvest)
   - name: 'python:3.10'
