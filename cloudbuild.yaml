@@ -11,6 +11,19 @@ steps:
       - '-c'
       - |
         echo "🚀 Starting pipeline..."
+        echo "=== INITIAL STATE ==="
+        echo "Current branch:"
+        git branch
+        echo "Current directory:"
+        pwd
+        echo "Files in workspace:"
+        ls -la
+        echo "Git status:"
+        git status
+        echo "Untracked files specifically:"
+        git ls-files --others --exclude-standard
+        echo "===================="
+
         apt-get update -y && apt-get install -y git-lfs
         git lfs install --force
 
