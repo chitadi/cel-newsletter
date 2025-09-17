@@ -81,6 +81,7 @@ def fetch_rss(source: dict, db: Session, horizon_hours=24):
         # --- URL handling ---
         url = getattr(entry, "link", None)
         url = resolve_google_news_url(url)
+        url = resolve_google_news_url(url)
         if not url:
             print(f"❌ No link found for entry in {source['name']}, skipping")
             continue
@@ -117,7 +118,6 @@ def fetch_rss(source: dict, db: Session, horizon_hours=24):
             url=url,
             title=entry.title,
             published_at=published,
-            html=html,
             text=text,
             fetched_at=datetime.datetime.utcnow(),
             image_url=img
