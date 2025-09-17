@@ -1,5 +1,5 @@
 # init_db.py
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, text
 from sqlalchemy.orm import Session
 from src.models import Base, Subscriber
 from datetime import datetime
@@ -50,6 +50,22 @@ HARDCODED_SUBS = [
 "varshasreekumar2003@gmail.com"
 ]
 
+def drop_html_column(engine):
+    """Drop the 'html' column from articles if it exists (SQLite ≥ 3.35)."""
+    with engine.connect() as conn:
+        try:
+            # Check if column exists
+            result = conn.execute(text("PRAGMA table_info(articles)")).fetchall()
+            columns = [row[1] for row in result]
+            if "html" in columns:
+                conn.execute(text("ALTER TABLE articles DROP COLUMN html"))
+                print("✅ Dropped 'html' column from articles")
+            else:
+                print("ℹ️ No 'html' column found, skipping drop")
+        except Exception as e:
+            print(f"⚠️ Could not drop 'html' column (maybe SQLite too old): {e}")
+
+
 def seed_subscribers(session: Session):
     # Only seed if the table is empty
     # if session.scalar(select(Subscriber.email).limit(1)):
@@ -72,6 +88,7 @@ def seed_subscribers(session: Session):
 def main():
     engine = create_engine(DB_URL)
     Base.metadata.create_all(engine)
+    drop_html_column(engine)
     print("✅ newsletter.db schema ensured")
 
     with Session(engine) as session:
