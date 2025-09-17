@@ -62,7 +62,7 @@ steps:
         # Debug: Check if the key is being set (shows length, not the actual key)
         echo "YOUTUBE_API_KEY length: ${#YOUTUBE_API_KEY}"
 
-        apt-get update -y && apt-get install -y git-lfs
+        apt-get update -y && apt-get install -y git-lfs wget gnupg
         git lfs install
         git config --global user.email "bot@github.com"
         git config --global user.name "Newsletter Bot"
@@ -70,6 +70,11 @@ steps:
 
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
+        echo "🎭 Installing Playwright..."
+        playwright install-deps
+        playwright install chromium
+        echo "✅ Playwright ready"
 
         if [ ! -f newsletter.db ]; then
           python -m src.init_db
