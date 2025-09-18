@@ -12,7 +12,6 @@ class Article(Base):
     url           = Column(Text, unique=True)
     title         = Column(Text)
     published_at  = Column(DateTime)
-    html          = Column(Text)
     text          = Column(Text)
     fetched_at    = Column(DateTime)
     score        = Column(Integer)   # nullable
