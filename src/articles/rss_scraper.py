@@ -4,7 +4,7 @@ from src.models import Article
 from src.articles.article_extractor import extract_text 
 from bs4 import BeautifulSoup
 import dateutil.parser
-from src.articles.selenium_method import fetch_with_selenium_stealth
+from src.articles.rss_scraper_utils import fetch_with_selenium_stealth
 from articles.rss_scraper_utils import resolve_google_news_url
 
 UTC = pytz.utc 
