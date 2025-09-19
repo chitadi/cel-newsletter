@@ -6,7 +6,7 @@ scoring_categories:
     keywords: [India, micro-VC, quick-commerce, Crore, INR, Lakh, SEBI, UPI, NPCI, RBI, Rs, rupee, defence-tech, aerospace, space, space-tech, DHRP, IPO-bound]
   - name: Indian_Companies
     weight: 2
-    keywords: [Nykaa, Meesho, Flipkart, Amazon, Zepto, blinkit, zomato, oyo, Rapido, ola, Uber, namma yatri, swiggy, GROWW, ZERODHA, delhivery, paytm, lenskart, sarvam, krutim, pixxel, isro, Phonepe, google pay, gpay ]
+    keywords: [Nykaa, Meesho, Flipkart, Amazon, Zepto, blinkit, zomato, oyo, Rapido, ola, Uber, namma yatri, swiggy, GROWW, ZERODHA, delhivery, paytm, lenskart, sarvam, krutim, pixxel, isro, Phonepe, google pay, gpay, Meta, Apple, Google, Microsoft, Amazon, Tesla, OpenAI, Anthropic, Samsung, Sony, Intel, NVIDIA, AMD]
   - name: Topic_Startup_Generic
     weight: 3
     keywords: [founder, startup, entrepreneur, backed, launched, CEO, Bengaluru, Gurugram, Mumbai, Tier, sector, startup ecosystem, Silicon Valley, IIT, IIM, BITS]
@@ -20,17 +20,21 @@ scoring_categories:
     weight: 4
     keywords: [series, seed, investor, venture capital, vc, angel, round, pre-seed, funding, Series A, Series B, seed funding, angel investment, fundraise]
   - name: Concept_Startup_Metrics
-    weight: 5
+    weight: 6
     keywords: [bootstrapped, accelerator, incubator, growth, scale, traction, CAC, burn rate, valuation, unicorn, decacorn, IPO, SPAC, exit, acquisition, merger, pivot, product launch, MVP, go-to-market]
   - name: Concept_Tech_Specifics
     weight: 3
     keywords: [deep learning, generative ai, devops, framework, library, tech stack, data infrastructure, LLM, model, NLP, computer vision, autonomous, gpu, training, fine-tuning]
   - name: Concept_Finance_Metrics
-    weight: 3
+    weight: 4
     keywords: [ipo, initial public offering, earnings, quarterly results, downround, regulation, sec filing, fintech, neobank, insurtech, m&a, profit, revenue, runway, cash flow, capital, buyout, pat, FY24, FY25, portfolio,]
 
   # # --- Tier 3: Deep-Dive & Niche Topics (High Weight) ---
   # # Does the article provide in-depth analysis or cover niche areas?
+  - name: Major_Product_Launch
+    weight: 6
+    keywords: [new product, product launch, unveils, reveals, announces, debuts, introduces, released, available now, coming soon, pre-order, flagship, next generation, updated, redesigned, successor]
+  
   - name: Financial_Substance  
     weight: 6
     keywords: [revenue growth, burn rate, runway, cash flow, valuation cut, down round, liquidation preference, board seats, voting rights, drag-along, anti-dilution, waterfall analysis, cap table]
@@ -49,7 +53,7 @@ semantic_keywords:
 
   - growth_terms: ["growth", "expansion", "scale", "milestone", "achievement", "breakthrough", "success", "launch", "revenue", "users", "adoption", "traction", "increase", "surge", "boom", "rise", "uptick", "momentum", "acceleration", "progress", "development", "advancement", "improvement", "gains", "performance", "metrics", "KPI", "targets", "goals"]
 
-  - innovation_terms: ["innovation", "technology", "development", "breakthrough", "advancement", "feature", "product", "platform", "research", "engineering", "technical", "prototype", "beta", "alpha", "release", "update", "upgrade", "enhancement", "optimization", "algorithm", "framework", "architecture", "infrastructure", "patent", "intellectual property", "R&D", "laboratory", "experiment"]
+  - innovation_terms: ["technology", "development", "breakthrough", "advancement", "feature", "product", "platform", "research", "engineering", "technical", "prototype", "beta", "alpha", "release", "update", "upgrade", "enhancement", "optimization", "algorithm", "framework", "architecture", "infrastructure", "patent", "intellectual property", "R&D", "laboratory", "experiment", "launch", "release", "unveil", "debut", "flagship", "cutting-edge", "next-gen", "revolutionary", "first-of-its-kind", "breakthrough", "innovation"]
 
   - business_terms: ["funding", "investment", "partnership", "acquisition", "merger", "strategy", "expansion", "deal", "agreement", "collaboration", "venture", "round", "capital", "financing", "valuation", "equity", "stake", "shares", "IPO", "public", "private", "syndicate", "consortium", "joint venture", "strategic alliance", "distribution", "licensing", "franchise"]
 
