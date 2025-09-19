@@ -38,5 +38,7 @@ PyYAML
 stem                       # only if you actually use it
 
 # -- playwright and selenium stuff ------------------------------
+selenium>=4.15.0
+undetected-chromedriver>=3.5.0
 playwright==1.40.0
 lxml==4.9.3

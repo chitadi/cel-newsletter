@@ -52,15 +52,6 @@
   paywall: false
   scrape_method: rss
 
-- name: The Morning Context
-  url: https://themorningcontext.com
-  category: Indian Startups
-  feed_url: https://news.google.com/rss/search?q=when:24h+allinurl:themorningcontext.com&hl=en-US&gl=US&ceid=US:en
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
-
 - name: LiveMint
   url: https://www.livemint.com
   category: finance
@@ -527,33 +518,6 @@
   url: https://www.entrepreneur.com
   category: tech, startups
   feed_url: https://www.entrepreneur.com/rss-feed/latest
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
-
-- name: New York Times - Tech
-  url: https://www.nytimes.com
-  category: tech, startups
-  feed_url: https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
-
-- name: New York Times - Personal Tech
-  url: https://www.nytimes.com
-  category: tech, startups
-  feed_url: https://rss.nytimes.com/services/xml/rss/nyt/PersonalTech.xml
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
-
-- name: New York Times - Business
-  url: https://www.nytimes.com
-  category: tech, startups
-  feed_url: https://rss.nytimes.com/services/xml/rss/nyt/Business.xml
   rss: true
   login_required: false
   paywall: false

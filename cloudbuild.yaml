@@ -62,8 +62,15 @@ steps:
         # Debug: Check if the key is being set (shows length, not the actual key)
         echo "YOUTUBE_API_KEY length: ${#YOUTUBE_API_KEY}"
 
-        apt-get update -y && apt-get install -y git-lfs wget gnupg
-        playwright install-deps
+        apt-get update -y && apt-get install -y git-lfs wget gnupg unzip
+
+        # Install Chrome for Selenium
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+        apt-get update && apt-get install -y google-chrome-stable \
+        fonts-liberation libnss3 libatk-bridge2.0-0 libdrm2 \
+        libxkbcommon0 libxss1 libgtk-3-0 libgbm1
+        
         git lfs install
         git config --global user.email "bot@github.com"
         git config --global user.name "Newsletter Bot"
@@ -124,7 +131,15 @@ steps:
         export SMTP_PASS="$$_SMTP_PASS"
 
         # Setup (same as harvest step)
-        apt-get update -y && apt-get install -y git-lfs tor
+        apt-get update -y && apt-get install -y git-lfs tor wget gnupg unzip
+
+        # Install Chrome for Selenium
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+        apt-get update && apt-get install -y google-chrome-stable \
+        fonts-liberation libnss3 libatk-bridge2.0-0 libdrm2 \
+        libxkbcommon0 libxss1 libgtk-3-0 libgbm1
+
         git lfs install
         git config --global user.email "bot@github.com"
         git config --global user.name "Newsletter Bot"

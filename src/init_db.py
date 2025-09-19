@@ -88,7 +88,7 @@ def seed_subscribers(session: Session):
 def main():
     engine = create_engine(DB_URL)
     Base.metadata.create_all(engine)
-    drop_html_column(engine)
+    # drop_html_column(engine)
     print("✅ newsletter.db schema ensured")
 
     with Session(engine) as session:
