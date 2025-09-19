@@ -540,12 +540,3 @@
   login_required: false
   paywall: false
   scrape_method: rss
-
-- name: storyboard18
-  url: https://www.storyboard18.com
-  category: misc
-  feed_url: https://www.storyboard18.com/commonfeeds/v1/sbe/sitemap/google-news.xml
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
