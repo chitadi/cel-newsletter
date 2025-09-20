@@ -202,7 +202,7 @@ def fetch_with_selenium_stealth(url):
         return html
         
     except Exception as e:
-        return None, str(e)
+        return None
     finally:
         if driver:
             driver.quit()

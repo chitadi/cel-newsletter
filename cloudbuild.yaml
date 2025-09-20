@@ -93,8 +93,7 @@ steps:
         pip install -r requirements.txt
 
         echo "🎭 Installing Playwright..."
-        export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
-        echo "✅ Playwright configured to use system Chrome"
+        python -m playwright install --with-deps chromium
 
         if [ ! -f newsletter.db ]; then
           python -m src.init_db
