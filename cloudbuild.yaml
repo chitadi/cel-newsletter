@@ -49,6 +49,7 @@ steps:
     entrypoint: 'bash'
     env:
       - 'PYTHONPATH=/workspace'
+      - 'PLAYWRIGHT_BROWSERS_PATH=/usr/bin'  # Force Playwright to use system browsers
     args:
       - '-c'
       - |
@@ -82,7 +83,7 @@ steps:
         pip install -r requirements.txt
 
         echo "🎭 Installing Playwright..."
-        playwright install chromium
+        playwright install chromium --with-deps
         echo "✅ Playwright ready"
 
         # if [ ! -f newsletter.db ]; then
@@ -117,6 +118,7 @@ steps:
     entrypoint: 'bash'
     env:
       - 'PYTHONPATH=/workspace'
+      - 'PLAYWRIGHT_BROWSERS_PATH=/usr/bin'  # Force Playwright to use system browsers
       - 'SMTP_HOST=smtp.gmail.com'
       - 'SMTP_PORT=587'
     args:
