@@ -44,7 +44,7 @@ steps:
     secretEnv: ['_GITHUB_TOKEN', '_GITHUB_REPO']
 
   # 3) Harvest (trigger: _TRIGGER_TYPE=harvest)
-  - name: 'python:3.10'
+  - name: 'mcr.microsoft.com/playwright/python:v1.40.0-focal'
     id: 'harvest'
     entrypoint: 'bash'
     env:
@@ -62,8 +62,7 @@ steps:
         # Debug: Check if the key is being set (shows length, not the actual key)
         echo "YOUTUBE_API_KEY length: ${#YOUTUBE_API_KEY}"
 
-        apt-get update -y && apt-get install -y git-lfs wget gnupg unzip
-
+        apt-get update -y && apt-get install -y git-lfs
         git lfs install
         git config --global user.email "bot@github.com"
         git config --global user.name "Newsletter Bot"
@@ -72,18 +71,9 @@ steps:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-        echo "🎭 Installing Playwright..."
-        # Ensure no skip flag is set
-        unset PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD
-        python -m playwright install --with-deps chromium || {
-          echo "❌ Playwright browser install failed"; exit 1;
-        }
-
-        # Debug: confirm Chromium actually exists
-        echo "📂 Checking Playwright browser cache..."
-        ls -R /root/.cache/ms-playwright || true
-
-        echo "✅ Playwright Chromium ready"
+        echo "🎭 Playwright already bundled in this image"
+        python -m playwright --version
+        python -m playwright show-trace || true  # sanity check (optional)
 
         if [ ! -f newsletter.db ]; then
           python -m src.init_db
