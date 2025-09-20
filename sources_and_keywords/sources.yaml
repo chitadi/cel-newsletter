@@ -288,23 +288,23 @@
   paywall: false
   scrape_method: rss
 
-- name: Bloomberg Technology
-  url: https://news.google.com/rss/search?q=when:24h+allinurl:bloomberg.com&hl=en-US&gl=US&ceid=US:en
-  category: tech, finance
-  feed_url: https://news.google.com/rss/search?q=when:24h+allinurl:bloomberg.com&hl=en-US&gl=US&ceid=US:en
-  rss: true
-  login_required: false
-  paywall: true
-  scrape_method: api_search
+# - name: Bloomberg Technology
+#   url: https://news.google.com/rss/search?q=when:24h+allinurl:bloomberg.com&hl=en-US&gl=US&ceid=US:en
+#   category: tech, finance
+#   feed_url: https://news.google.com/rss/search?q=when:24h+allinurl:bloomberg.com&hl=en-US&gl=US&ceid=US:en
+#   rss: true
+#   login_required: false
+#   paywall: true
+#   scrape_method: api_search
 
-- name: Reuters Business
-  url: https://reuters.com/business
-  category: finance
-  feed_url: https://news.google.com/rss/search?q=when:24h+allinurl:reuters.com&hl=en-US&gl=US&ceid=US:en
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
+# - name: Reuters Business
+#   url: https://reuters.com/business
+#   category: finance
+#   feed_url: https://news.google.com/rss/search?q=when:24h+allinurl:reuters.com&hl=en-US&gl=US&ceid=US:en
+#   rss: true
+#   login_required: false
+#   paywall: false
+#   scrape_method: rss
 
 - name: The Fintech Times
   url: https://thefintechtimes.com
