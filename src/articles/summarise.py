@@ -94,7 +94,7 @@ def summarise_batch(limit: int = 5) -> None:
                 snippet = art.text[:6_000]
 
                 completion = client.chat.completions.create(
-                    model="deepseek/deepseek-r1-0528:free",
+                    model="x-ai/grok-4-fast:free",
                     messages=[{
                         "role": "user",
                         "content": PROMPT_TMPL.format(text=snippet)
@@ -108,7 +108,7 @@ def summarise_batch(limit: int = 5) -> None:
                 art.summary = clean_summary(content)
                 # Add delay after each API call (except the last one)
                 if i < len(pool) - 1:
-                    sleep_time = random.uniform(2, 4)  # 2-4 seconds random delay
+                    sleep_time = random.uniform(5, 10)  # 2-4 seconds random delay
                     print(f"💤 Sleeping {sleep_time:.1f}s to avoid rate limits...")
                     time.sleep(sleep_time)
 

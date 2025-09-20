@@ -51,7 +51,7 @@ def summarise_batch(limit: int = 1) -> None:
             snippet = content[:10000]  # keep under context window
             completion = client.chat.completions.create(
             extra_body={},
-            model="deepseek/deepseek-r1-0528:free",
+            model="x-ai/grok-4-fast:free",
             messages=[
                 {
                 "role": "user",
