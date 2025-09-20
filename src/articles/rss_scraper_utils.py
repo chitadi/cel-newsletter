@@ -162,7 +162,7 @@ def fetch_with_selenium_stealth(url):
     options.add_experimental_option('useAutomationExtension', False)
     
     # Optional: run headless
-    # options.add_argument('--headless')
+    options.add_argument('--headless')
     
     driver = None
     try:
@@ -183,9 +183,9 @@ def fetch_with_selenium_stealth(url):
         html = driver.page_source
         
         if "Please enable JS" in html:
-            return None, "Still being blocked"
+            return None
         
-        return html, None
+        return html
         
     except Exception as e:
         return None, str(e)
