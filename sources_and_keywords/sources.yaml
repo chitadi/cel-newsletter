@@ -169,15 +169,6 @@
   paywall: false
   scrape_method: rss
 
-- name: Finextra Research
-  url: https://www.finextra.com
-  category: finance
-  feed_url: https://www.finextra.com/rss/headlines.aspx
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
-
 - name: TechCrunch
   url: https://techcrunch.com
   category: startups, tech

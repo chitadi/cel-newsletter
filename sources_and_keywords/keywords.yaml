@@ -62,7 +62,7 @@ semantic_keywords:
 source_weights:
   YourStory:                            1.15
   Inc42:                                1.15
-  Entrackr:                             1.2
+  Entrackr:                             1.1
   Economic Times - Startups:            1.1
   Business Standard:                    1.1
   Moneycontrol:                         1.1
@@ -79,7 +79,7 @@ source_weights:
   Analytics India Magazine:             1.2
   DealStreetAsia:                       1.3
   Finshots:                             1.2
-  Finextra Research:                    1.0
+  Finextra Research:                    0.0
   TechCrunch:                           1.2
   Crunchbase News:                      1.2
   WIRED – Business:                     1.25
