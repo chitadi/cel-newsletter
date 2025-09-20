@@ -41,6 +41,7 @@ def _try_playwright_enhanced(url: str) -> str:
     import shutil
     # Find Chrome executable
     chrome_path = shutil.which('google-chrome') or shutil.which('google-chrome-stable') or '/usr/bin/google-chrome-stable'
+    print("Resolved Chrome path:", chrome_path)
     try:
         with sync_playwright() as p:
             # browser = p.chromium.launch(
