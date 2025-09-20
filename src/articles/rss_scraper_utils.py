@@ -3,7 +3,7 @@ from playwright.sync_api import sync_playwright
 import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-import random
+import random, requests
 
 def resolve_google_news_url(url: str) -> str:
     if "news.google.com/rss/articles" not in url:
@@ -36,18 +36,23 @@ def resolve_google_news_url(url: str) -> str:
     return url
 
 
-def _try_playwright_enhanced(url: str) -> str:
+def _try_playwright_enhanced(cls, url: str) -> str:
     """Enhanced Playwright approach with Yahoo Finance specific handling"""
     try:
         with sync_playwright() as p:
+            # browser = p.chromium.launch(
+            #     headless=True,
+            #     args=[
+            #         '--no-sandbox', 
+            #         '--disable-web-security',
+            #         '--disable-features=VizDisplayCompositor',
+            #         '--disable-dev-shm-usage'
+            #     ]
+            # )
             browser = p.chromium.launch(
                 headless=True,
-                args=[
-                    '--no-sandbox', 
-                    '--disable-web-security',
-                    '--disable-features=VizDisplayCompositor',
-                    '--disable-dev-shm-usage'
-                ]
+                executable_path='/usr/bin/google-chrome',  # Use your installed Chrome
+                args=cls._get_browser_args()
             )
             
             context = browser.new_context(
