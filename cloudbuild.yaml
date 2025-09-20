@@ -49,7 +49,6 @@ steps:
     entrypoint: 'bash'
     env:
       - 'PYTHONPATH=/workspace'
-      - 'PLAYWRIGHT_BROWSERS_PATH=/usr/bin'  # Force Playwright to use system browsers
     args:
       - '-c'
       - |
@@ -79,7 +78,6 @@ steps:
         libxcb-randr0 libxcb-shape0 libxcb-sync1 libxcb-xfixes0 \
         libxcb-xinerama0 libxcb-xkb1 libxcb1-dev libx11-dev    
 
-        playwright install
         git lfs install
         git config --global user.email "bot@github.com"
         git config --global user.name "Newsletter Bot"
@@ -124,7 +122,6 @@ steps:
     entrypoint: 'bash'
     env:
       - 'PYTHONPATH=/workspace'
-      - 'PLAYWRIGHT_BROWSERS_PATH=/usr/bin'  # Force Playwright to use system browsers
       - 'SMTP_HOST=smtp.gmail.com'
       - 'SMTP_PORT=587'
     args:
@@ -156,7 +153,6 @@ steps:
         libxcb-randr0 libxcb-shape0 libxcb-sync1 libxcb-xfixes0 \
         libxcb-xinerama0 libxcb-xkb1 libxcb1-dev libx11-dev
 
-        playwright install
         git lfs install
         git config --global user.email "bot@github.com"
         git config --global user.name "Newsletter Bot"
