@@ -38,32 +38,17 @@ def resolve_google_news_url(url: str) -> str:
 
 def _try_playwright_enhanced(url: str) -> str:
     """Enhanced Playwright approach with Yahoo Finance specific handling"""
-    import shutil
-    # Find Chrome executable
-    chrome_path = shutil.which('google-chrome') or shutil.which('google-chrome-stable') or '/usr/bin/google-chrome-stable'
-    print("Resolved Chrome path:", chrome_path)
     try:
         with sync_playwright() as p:
-            # browser = p.chromium.launch(
-            #     headless=True,
-            #     args=[
-            #         '--no-sandbox', 
-            #         '--disable-web-security',
-            #         '--disable-features=VizDisplayCompositor',
-            #         '--disable-dev-shm-usage'
-            #     ]
-            # )
             browser = p.chromium.launch(
-                        headless=True,
-                        executable_path=chrome_path,
-                        args=[
-                            '--no-sandbox',
-                            '--disable-dev-shm-usage', 
-                            '--disable-blink-features=AutomationControlled',
-                            '--disable-web-security',
-                            '--disable-features=VizDisplayCompositor'
-                        ]
-                    )            
+                headless=True,
+                args=[
+                    '--no-sandbox', 
+                    '--disable-web-security',
+                    '--disable-features=VizDisplayCompositor',
+                    '--disable-dev-shm-usage'
+                ]
+            )
             context = browser.new_context(
                 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 viewport={'width': 1920, 'height': 1080}
