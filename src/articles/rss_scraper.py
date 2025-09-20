@@ -10,11 +10,14 @@ UTC = pytz.utc
 
 UA = {"User-Agent": "Mozilla/5.0"}
 
-def fetch_rss(source: dict, db: Session, horizon_hours=24):
+def fetch_rss(source: dict, db: Session, horizon_hours=24, limit=30):
     cutoff = datetime.datetime.now(tz=UTC) - datetime.timedelta(hours=horizon_hours)
     feed = feedparser.parse(source["feed_url"])
-    
+    fetches = 0
     for entry in feed.entries:
+        if fetches >= limit:
+            break
+        fetches += 1
         img = None
         published = None
         if hasattr(entry, "published_parsed") and entry.published_parsed:
@@ -80,7 +83,7 @@ def fetch_rss(source: dict, db: Session, horizon_hours=24):
                 if first_img:
                     img = first_img["src"]
         
-        if entry.description:
+        if hasattr(entry, 'description') and entry.description:
             if len(text) < len(entry.description):
                 text = entry.description
 
