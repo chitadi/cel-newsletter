@@ -36,7 +36,7 @@ def resolve_google_news_url(url: str) -> str:
     return url
 
 
-def _try_playwright_enhanced(cls, url: str) -> str:
+def _try_playwright_enhanced(url: str) -> str:
     """Enhanced Playwright approach with Yahoo Finance specific handling"""
     try:
         with sync_playwright() as p:
@@ -50,11 +50,16 @@ def _try_playwright_enhanced(cls, url: str) -> str:
             #     ]
             # )
             browser = p.chromium.launch(
-                headless=True,
-                executable_path='/usr/bin/google-chrome',  # Use your installed Chrome
-                args=cls._get_browser_args()
-            )
-            
+                        headless=True,
+                        executable_path='/usr/bin/google-chrome',
+                        args=[
+                            '--no-sandbox',
+                            '--disable-dev-shm-usage', 
+                            '--disable-blink-features=AutomationControlled',
+                            '--disable-web-security',
+                            '--disable-features=VizDisplayCompositor'
+                        ]
+                    )            
             context = browser.new_context(
                 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 viewport={'width': 1920, 'height': 1080}
