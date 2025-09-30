@@ -30,7 +30,7 @@ def chunk(it, n):
 
 def send(html_path, txt_path):
     today = datetime.date.today()
-    subj  = f"Chittem's Keep‑Up with Startups - {today.strftime('%B %d, %Y')}"
+    subj  = f"Chittem ki Chitthi - {today.strftime('%B %d, %Y')}"
 
     html = open(html_path).read()
     txt  = open(txt_path).read()

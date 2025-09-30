@@ -88,46 +88,46 @@ def fetch_videos(max_results_per_channel=7, config_path="sources_and_keywords/ch
                     durations = {item["id"]: item["contentDetails"]["duration"] for item in video_resp.get("items", [])}
                 else:
                     durations = {}
-
+                
                 for item in pl_resp.get("items", []):
-                    snip = item["snippet"]
-                    vid = snip["resourceId"]["videoId"]
-                    published_at = datetime.datetime.fromisoformat(
-                        snip["publishedAt"].replace("Z", "+00:00")
-                    )
-                    if published_at.tzinfo is None:
-                        published_at = UTC.localize(published_at)
+                    try:
+                        snip = item["snippet"]
+                        vid = snip["resourceId"]["videoId"]
+                        published_at = datetime.datetime.fromisoformat(
+                            snip["publishedAt"].replace("Z", "+00:00")
+                        )
+                        if published_at.tzinfo is None:
+                            published_at = UTC.localize(published_at)
 
-                    # Stop when we hit older videos
-                    if published_at < cutoff:
-                        print(f"video for {channel_name} too old")
-                        stop_channel = True
-                        break
+                        if published_at < cutoff:
+                            print(f"video for {channel_name} too old")
+                            stop_channel = True
+                            break
 
-                    # Skip if already in DB
-                    if ssn.get(Video, vid):
-                        print(f"video for {channel_name} already present in db")
+                        if ssn.get(Video, vid):
+                            print(f"video for {channel_name} already present in db")
+                            continue
+
+                        dur_iso = durations.get(vid, "")
+                        if parse_iso_duration(dur_iso) < MIN_DURATION_SEC:
+                            print(f"video for {channel_name} too short")
+                            continue
+
+                        ssn.add(Video(
+                            video_id=vid,
+                            channel_name=channel_name,
+                            url=f"https://youtu.be/{vid}",
+                            title=snip["title"],
+                            description=snip.get("description", ""),
+                            thumbnail_url=snip["thumbnails"]["high"]["url"],
+                            published_at=published_at,
+                        ))
+                        fetched += 1
+                        print(f"Fetched {vid} from {channel_name} ({published_at})")
+
+                    except Exception as e:
+                        print(f"❌ Skipping video in {channel_name}: {e}")
                         continue
-
-                    # Filter by duration
-                    dur_iso = durations.get(vid, "")
-                    if parse_iso_duration(dur_iso) < MIN_DURATION_SEC:
-                        print(f"video for {channel_name} too short")
-                        continue
-
-                    # Add new video record
-                    ssn.add(Video(
-                        video_id=vid,
-                        channel_name=channel_name,
-                        url=f"https://youtu.be/{vid}",
-                        title=snip["title"],
-                        description=snip.get("description", ""),
-                        thumbnail_url=snip["thumbnails"]["high"]["url"],
-                        published_at=published_at,
-                    ))
-                    fetched += 1
-                    print(f"Fetched {vid} from {channel_name} ({published_at})")
-
 
                 next_page_token = pl_resp.get("nextPageToken")
                 if not next_page_token:
