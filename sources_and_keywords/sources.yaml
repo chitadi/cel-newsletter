@@ -373,7 +373,7 @@
 - name: The Arc
   url: https://www.thearcweb.com
   category: tech, startups
-  feed_url: https://www.thearcweb.com/rss
+  feed_url: https://www.thearcweb.com/rss.xml
   rss: true
   login_required: false
   paywall: false
