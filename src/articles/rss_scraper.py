@@ -12,8 +12,10 @@ UA = {"User-Agent": "Mozilla/5.0"}
 
 def fetch_rss(source: dict, db: Session, horizon_hours=24, limit=30):
     cutoff = datetime.datetime.now(tz=UTC) - datetime.timedelta(hours=horizon_hours)
+    print(f"Fetching RSS feed for {source['name']} from {source['feed_url']}")
     feed = feedparser.parse(source["feed_url"])
     fetches = 0
+    print(len(feed.entries), "entries found in feed")
     for entry in feed.entries:
         if fetches >= limit:
             break
