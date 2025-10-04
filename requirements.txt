@@ -19,6 +19,7 @@ lxml_html_clean
 openai                    # via OpenRouter key
 sentence-transformers
 numpy
+google-genai
 
 # ── Templating / e-mail ────────────────────────────────────
 jinja2

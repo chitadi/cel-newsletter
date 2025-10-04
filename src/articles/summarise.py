@@ -7,8 +7,7 @@ from sqlalchemy.orm import Session
 from src.models import Article
 import time
 import random
-
-import re
+from google import genai
 
 def clean_summary(text: str) -> str:
     # 1. Remove Markdown formatting (bold, italics, headings, inline code)
@@ -32,9 +31,7 @@ def clean_summary(text: str) -> str:
 
 dotenv.load_dotenv()                               
 
-MODEL = "deepseek/deepseek-r1-0528-qwen3-8b:free" 
 DB  = "newsletter.db"
-import textwrap
 
 PROMPT_TMPL = textwrap.dedent("""\
     Please summarize the following article for a general-audience newsletter.
@@ -57,25 +54,53 @@ PROMPT_TMPL = textwrap.dedent("""\
     {text}
 """)
 
+# Configure Gemini client
+gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-
-client = OpenAI(
-  base_url="https://openrouter.ai/api/v1",
-  api_key = os.getenv("OPENROUTER_API_KEY"),
+# Configure OpenRouter as fallback
+openrouter_client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv("OPENROUTER_API_KEY"),
 )
 
 ROUNDUP_RE = re.compile(r"\bround[\s-]*up\b", re.I)
 COHORT_RE = re.compile(r"\bcohort\b", re.I)
 
+def get_summary_gemini(text: str) -> str:
+    """Try to get summary using Gemini API."""
+    try:
+        response = gemini_client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=PROMPT_TMPL.format(text=text)
+        )
+        return response.text.strip()
+    except Exception as e:
+        print(f"⚠️ Gemini API error: {e}")
+        return None
 
+def get_summary_openrouter(text: str) -> str:
+    """Fallback to OpenRouter API."""
+    try:
+        completion = openrouter_client.chat.completions.create(
+            model="deepseek/deepseek-chat-v3-0324:free",
+            messages=[{
+                "role": "user",
+                "content": PROMPT_TMPL.format(text=text)
+            }],
+            extra_body={}
+        )
+        return completion.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"⚠️ OpenRouter API error: {e}")
+        return None
+    
 def summarise_batch(limit: int = 5) -> None:
     """Summarise the top <limit> scored, non-duplicate, non-roundup articles."""
 
     eng = sa.create_engine("sqlite:///newsletter.db")
 
     with Session(eng) as ssn:
-
-        # 1️⃣  Pull a wider pool (3× limit) sorted by score
+        # Pull a wider pool (3× limit) sorted by score
         pool = (
             ssn.query(Article)
                .filter(Article.summary.is_(None))
@@ -84,39 +109,40 @@ def summarise_batch(limit: int = 5) -> None:
                .all()
         )
 
-        # 3️⃣  Summarise each selected article
+        # Summarise each selected article
         for i, art in enumerate(pool):
             try:
                 if ROUNDUP_RE.search(art.title) or COHORT_RE.search(art.title):
-                    ssn.delete(art)  # remove roundup articles
-                    continue                      # skip roundup articles
+                    ssn.delete(art)
+                    continue
     
                 snippet = art.text[:6_000]
 
-                completion = client.chat.completions.create(
-                    model="deepseek/deepseek-chat-v3-0324:free",
-                    messages=[{
-                        "role": "user",
-                        "content": PROMPT_TMPL.format(text=snippet)
-                    }],
-                    extra_body={}
-                )
-                content = completion.choices[0].message.content.strip()
+                # Try Gemini first
+                content = get_summary_gemini(snippet)
+                
+                # Fallback to OpenRouter if Gemini fails
                 if not content:
-                    print(f"⚠️  Empty summary for: {art.title[:60]}")
+                    print(f"🔄 Falling back to OpenRouter for: {art.title[:60]}")
+                    content = get_summary_openrouter(snippet)
+                
+                if not content:
+                    print(f"⚠️ Both APIs failed for: {art.title[:60]}")
                     continue
+                
                 art.summary = clean_summary(content)
-                # Add delay after each API call (except the last one)
+                
+                # Add delay after each API call
                 if i < len(pool) - 1:
-                    sleep_time = random.uniform(5, 10)  # 2-4 seconds random delay
-                    print(f"💤 Sleeping {sleep_time:.1f}s to avoid rate limits...")
+                    sleep_time = random.uniform(5, 10)
+                    print(f"💤 Sleeping {sleep_time:.1f}s...")
                     time.sleep(sleep_time)
 
             except Exception as e:
-                print(f"❌ LLM error on: {art.title[:60]} – {e}")
+                print(f"❌ Error on: {art.title[:60]} – {e}")
                 continue
 
-        ssn.commit()   # one commit for all updates
+        ssn.commit()
         print(f"✅ summarised {len([a for a in pool if a.summary])} / {limit} articles")
 
 if __name__ == "__main__":
