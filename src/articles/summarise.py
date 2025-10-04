@@ -94,7 +94,7 @@ def summarise_batch(limit: int = 5) -> None:
                 snippet = art.text[:6_000]
 
                 completion = client.chat.completions.create(
-                    model="x-ai/grok-4-fast:free",
+                    model="deepseek/deepseek-chat-v3-0324:free",
                     messages=[{
                         "role": "user",
                         "content": PROMPT_TMPL.format(text=snippet)
