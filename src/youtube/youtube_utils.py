@@ -37,6 +37,7 @@ from youtube_transcript_api import (
     NoTranscriptFound,
     CouldNotRetrieveTranscript,
 )
+from youtube_transcript_api.proxies import ProxyConfig
 
 # ---------------------------------------------------------------------------
 # Config & TOR
@@ -52,8 +53,9 @@ MAX_RETRIES_PER_VIDEO = 3
 DEBUG = bool(os.getenv("YT_CAPTION_DEBUG", "0"))
 
 # ---------------- Cookie handling ----------------
-COOKIE_FILE = Path(os.getenv("YT_COOKIE_FILE"))
-if not COOKIE_FILE.exists():
+cookie_file_path = os.getenv("YT_COOKIE_FILE")
+COOKIE_FILE = Path(cookie_file_path) if cookie_file_path else None
+if COOKIE_FILE and not COOKIE_FILE.exists():
     # Attempt live browser extraction (Chrome/Firefox)
     try:
         import browser_cookie3 as bc3  # type: ignore
@@ -193,9 +195,13 @@ def _fetch_transcript_ytdlp(video_id: str, attempt: int = 0) -> Optional[str]:
 
 def _fetch_transcript_ytapi(video_id: str) -> Optional[str]:
     # First try preferred English keys → then any language → then auto‑translate.
+    proxy_config = ProxyConfig(
+        http=PROXIES.get('http'),
+        https=PROXIES.get('https')
+    ) if PROXIES else None
     for langs in (PREFERRED_EN_KEYS, ()):  # empty tuple means “any”
         try:
-            api = YouTubeTranscriptApi(proxy_config=PROXIES if PROXIES else None)
+            api = YouTubeTranscriptApi(proxy_config=proxy_config)
             transcripts = api.list(video_id)
             transcript = transcripts.find_transcript(list(langs)) if langs else transcripts.find_transcript(transcripts._languages)
             data = transcript.fetch()
