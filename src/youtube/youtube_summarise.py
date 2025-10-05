@@ -2,7 +2,7 @@ import os, textwrap, dotenv
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 from openai import OpenAI
-from google import genai
+import google.generativeai as genai
 from src.models import Video
 from src.articles.summarise import clean_summary
 
@@ -31,7 +31,8 @@ PROMPT_TMPL = textwrap.dedent("""\
 """)
 
 # Configure Gemini client
-gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+gemini_model = genai.GenerativeModel('gemini-2.5-flash')
 
 # Configure OpenRouter as fallback
 openrouter_client = OpenAI(
@@ -40,17 +41,13 @@ openrouter_client = OpenAI(
 )
 
 def get_summary_gemini(text: str) -> str:
-    """Try to get summary using Gemini API."""
     try:
-        response = gemini_client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=PROMPT_TMPL.format(text=text)
-        )
+        response = gemini_model.generate_content(PROMPT_TMPL.format(text=text))
         return response.text.strip()
     except Exception as e:
         print(f"⚠️ Gemini API error: {e}")
         return None
-
+    
 def get_summary_openrouter(text: str) -> str:
     """Fallback to OpenRouter API."""
     try:

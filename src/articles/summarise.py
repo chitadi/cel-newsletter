@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from src.models import Article
 import time
 import random
-from google import genai
+import google.generativeai as genai
 
 def clean_summary(text: str) -> str:
     # 1. Remove Markdown formatting (bold, italics, headings, inline code)
@@ -55,7 +55,9 @@ PROMPT_TMPL = textwrap.dedent("""\
 """)
 
 # Configure Gemini client
-gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+# Configure Gemini
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+gemini_model = genai.GenerativeModel('gemini-2.5-flash')
 
 # Configure OpenRouter as fallback
 openrouter_client = OpenAI(
@@ -69,15 +71,12 @@ COHORT_RE = re.compile(r"\bcohort\b", re.I)
 def get_summary_gemini(text: str) -> str:
     """Try to get summary using Gemini API."""
     try:
-        response = gemini_client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=PROMPT_TMPL.format(text=text)
-        )
+        response = gemini_model.generate_content(PROMPT_TMPL.format(text=text))
         return response.text.strip()
     except Exception as e:
         print(f"⚠️ Gemini API error: {e}")
         return None
-
+    
 def get_summary_openrouter(text: str) -> str:
     """Fallback to OpenRouter API."""
     try:
