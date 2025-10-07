@@ -239,11 +239,6 @@ def _fetch_transcript_ytapi(video_id: str) -> Optional[str]:
             lang.language_code
             for lang in getattr(transcripts, "_translation_languages", [])
         ]
-        # youtube-transcript-api>=0.6 returns TranslationLanguage objects via
-        # `_translation_languages` instead of exposing raw strings on
-        # `_languages`. Extracting the language_code property keeps the
-        # generated-ASR fallback compatible with newer releases while still
-        # feeding `find_generated_transcript` the string codes it expects.
         if not translation_codes:
             return None
         gen = transcripts.find_generated_transcript(translation_codes)
