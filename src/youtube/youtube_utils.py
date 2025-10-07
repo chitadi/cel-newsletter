@@ -37,7 +37,7 @@ from youtube_transcript_api import (
     NoTranscriptFound,
     CouldNotRetrieveTranscript,
 )
-from youtube_transcript_api.proxies import ProxyConfig
+from youtube_transcript_api.proxies import GenericProxyConfig, InvalidProxyConfig
 
 # ---------------------------------------------------------------------------
 # Config & TOR
@@ -195,18 +195,37 @@ def _fetch_transcript_ytdlp(video_id: str, attempt: int = 0) -> Optional[str]:
 
 def _fetch_transcript_ytapi(video_id: str) -> Optional[str]:
     # First try preferred English keys → then any language → then auto‑translate.
-    proxy_config = ProxyConfig(
-        http=PROXIES.get('http'),
-        https=PROXIES.get('https')
-    ) if PROXIES else None
+    proxy_config = None
+    if PROXIES:
+        try:
+            proxy_config = GenericProxyConfig(
+                http_url=PROXIES.get("http"),
+                https_url=PROXIES.get("https"),
+            )
+        except InvalidProxyConfig:
+            proxy_config = None
+
+    api = YouTubeTranscriptApi(proxy_config=proxy_config)
     for langs in (PREFERRED_EN_KEYS, ()):  # empty tuple means “any”
         try:
-            api = YouTubeTranscriptApi(proxy_config=proxy_config)
             transcripts = api.list(video_id)
-            transcript = transcripts.find_transcript(list(langs)) if langs else transcripts.find_transcript(transcripts._languages)
+            if langs:
+                try:
+                    transcript = transcripts.find_transcript(list(langs))
+                except NoTranscriptFound:
+                    continue
+            else:
+                transcript = next(iter(transcripts), None)
+                if transcript is None:
+                    return None
+
             data = transcript.fetch()
             if data:
-                return "\n".join(chunk["text"].strip() for chunk in data if chunk["text"].strip())
+                return "\n".join(
+                    chunk["text"].strip()
+                    for chunk in data
+                    if chunk["text"].strip()
+                )
         except (TranscriptsDisabled, NoTranscriptFound):
             return None
         except CouldNotRetrieveTranscript:
@@ -215,10 +234,23 @@ def _fetch_transcript_ytapi(video_id: str) -> Optional[str]:
             continue
     # auto‑translate generated ASR to English
     try:
-        transcripts = YouTubeTranscriptApi.list_transcripts(video_id, proxies=PROXIES)
-        gen = transcripts.find_generated_transcript(transcripts._languages)
+        transcripts = api.list(video_id)
+        translation_codes = [
+            lang.language_code
+            for lang in getattr(transcripts, "_translation_languages", [])
+        ]
+        # youtube-transcript-api>=0.6 returns TranslationLanguage objects via
+        # `_translation_languages` instead of exposing raw strings on
+        # `_languages`. Extracting the language_code property keeps the
+        # generated-ASR fallback compatible with newer releases while still
+        # feeding `find_generated_transcript` the string codes it expects.
+        if not translation_codes:
+            return None
+        gen = transcripts.find_generated_transcript(translation_codes)
         data = gen.translate("en").fetch()
-        return "\n".join(chunk["text"].strip() for chunk in data if chunk["text"].strip())
+        return "\n".join(
+            chunk["text"].strip() for chunk in data if chunk["text"].strip()
+        )
     except Exception:
         return None
 
