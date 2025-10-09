@@ -83,7 +83,8 @@ def article_score(article, now: dt.datetime) -> int:
         sem_scores.get("business_terms", 0) * 7 +      
         sem_scores.get("growth_terms", 0) * 6 +        
         sem_scores.get("innovation_terms", 0) * 8 +    
-        sem_scores.get("governance_terms", 0) * 4          
+        sem_scores.get("governance_terms", 0) * 4  +
+        sem_scores.get("promotional_terms", 0) * -5     # Penalize promotional content        
     )
     
     # Source multiplier

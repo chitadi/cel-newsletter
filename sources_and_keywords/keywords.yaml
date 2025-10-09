@@ -47,6 +47,17 @@ scoring_categories:
     weight: 4
     keywords: [market expansion, vertical integration, horizontal expansion, strategic partnership, joint venture, licensing deal, distribution agreement, merger talks, acquisition target, spin-off]
 
+  - name: Promotional_Content
+    weight: -8  # Negative weight to penalize
+    keywords: [prime day, deals, best deals, sale, discount, offer, limited time, shop now, buy now, available now, hurry, don't miss, last chance, exclusive offer, special price, save up to, percent off, coupon, promo code]
+
+  - name: Listicle_Fluff
+    weight: -6
+    keywords: [best cases, top 10, best products, our favorite, we recommend, buying guide, gift guide, shopping guide, best gifts, top picks, must-have, essential items, you need, you should buy, perfect for, great for]
+
+  - name: Generic_Consumer_Tech
+    weight: -4
+    keywords: [phone case, screen protector, charger, cable, accessory, gadget, device, compatible with, works with, fits, designed for, protection, durable]
 
 semantic_keywords:
   - quality_terms: ["analysis", "research", "study", "investigation", "data shows", "according to", "exclusive", "sources say", "documents", "report", "findings", "insights", "deep dive", "comprehensive", "detailed", "thorough", "evidence", "methodology", "survey", "poll", "interview", "expert", "specialist", "academic", "peer-reviewed", "whitepaper"]
@@ -58,6 +69,8 @@ semantic_keywords:
   - business_terms: ["funding", "investment", "partnership", "acquisition", "merger", "strategy", "expansion", "deal", "agreement", "collaboration", "venture", "round", "capital", "financing", "valuation", "equity", "stake", "shares", "IPO", "public", "private", "syndicate", "consortium", "joint venture", "strategic alliance", "distribution", "licensing", "franchise"]
 
   - governance_terms: ["CEO", "founder", "board", "leadership", "executive", "management", "appointment", "hiring", "team", "organization", "director", "officer", "chairman", "president", "vice president", "C-suite", "senior", "promotion", "recruitment", "talent", "human resources", "organizational", "corporate", "governance", "structure", "hierarchy"]
+
+  - promotional_terms: ["deal", "sale", "discount", "shopping", "purchase", "buy", "price", "cheap", "affordable", "budget", "value", "bargain", "offer", "promotion", "advertisement", "recommendation", "review", "comparison"]
 
 source_weights:
   YourStory:                            1.15
