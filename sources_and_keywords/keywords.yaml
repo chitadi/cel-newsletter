@@ -49,7 +49,7 @@ scoring_categories:
 
   - name: Promotional_Content
     weight: -8  # Negative weight to penalize
-    keywords: [prime day, deals, best deals, sale, discount, offer, limited time, shop now, buy now, available now, hurry, don't miss, last chance, exclusive offer, special price, save up to, percent off, coupon, promo code]
+    keywords: [prime day, deals, best deals, sale, discount, offer, limited time, shop now, buy now, available now, hurry, don't miss, last chance, exclusive offer, special price, save up to, percent off, coupon, promo code, summit, conference]
 
   - name: Listicle_Fluff
     weight: -6
@@ -70,7 +70,7 @@ semantic_keywords:
 
   - governance_terms: ["CEO", "founder", "board", "leadership", "executive", "management", "appointment", "hiring", "team", "organization", "director", "officer", "chairman", "president", "vice president", "C-suite", "senior", "promotion", "recruitment", "talent", "human resources", "organizational", "corporate", "governance", "structure", "hierarchy"]
 
-  - promotional_terms: ["deal", "sale", "discount", "shopping", "purchase", "buy", "price", "cheap", "affordable", "budget", "value", "bargain", "offer", "promotion", "advertisement", "recommendation", "review", "comparison"]
+  - promotional_terms: ["deal", "sale", "discount", "shopping", "purchase", "buy", "price", "cheap", "affordable", "budget", "value", "bargain", "offer", "promotion", "advertisement", "recommendation", "review", "comparison", "summit", "conference"]
 
 source_weights:
   YourStory:                            1.15
