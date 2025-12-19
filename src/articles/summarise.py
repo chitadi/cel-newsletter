@@ -133,7 +133,7 @@ def summarise_batch(limit: int = 5) -> None:
                 
                 # Add delay after each API call
                 if i < len(pool) - 1:
-                    sleep_time = random.uniform(5, 10)
+                    sleep_time = random.uniform(15, 20)
                     print(f"💤 Sleeping {sleep_time:.1f}s...")
                     time.sleep(sleep_time)
 
