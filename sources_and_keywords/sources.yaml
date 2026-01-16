@@ -352,14 +352,14 @@
   paywall: false
   scrape_method: rss
 
-- name: Yahoo Finance
-  url: https://finance.yahoo.com
-  category: finance
-  feed_url: https://news.google.com/rss/search?q=when:24h+allinurl:finance.yahoo.com&hl=en-US&gl=US&ceid=US:en
-  rss: true
-  login_required: false
-  paywall: false
-  scrape_method: rss
+# - name: Yahoo Finance
+#   url: https://finance.yahoo.com
+#   category: finance
+#   feed_url: https://news.google.com/rss/search?q=when:24h+allinurl:finance.yahoo.com&hl=en-US&gl=US&ceid=US:en
+#   rss: true
+#   login_required: false
+#   paywall: false
+#   scrape_method: rss
 
 - name: MarketWatch
   url: https://marketwatch.com
