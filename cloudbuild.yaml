@@ -220,4 +220,4 @@ options:
     - name: pip-cache
       path: /root/.cache/pip
 
-timeout: 3600s
+timeout: 7200s
